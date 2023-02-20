@@ -1,20 +1,20 @@
 class Game {
-  constructor() {
-    this.characters = [];
+  constructor(characters) {
+    this.characters = characters;
     this.currentTurn = 0;
-  }
-
-  addCharacter(character) {
-    this.characters.push(character);
-  }
-
-  getCurrentCharacter() {
-    return this.characters[this.currentTurn];
+    this.currentPlayer = null;
+    this.opponentPlayer = null;
   }
 
   endTurn() {
     this.currentTurn = (this.currentTurn + 1) % this.characters.length;
+    this.currentPlayer = this.opponentPlayer;
+    this.opponentPlayer = this.getOpponentPlayer();
     console.log(`Turn ${this.currentTurn + 1} begins`);
+  }
+
+  endGame() {
+    console.log("Game over");
   }
 
   isGameOver() {
@@ -27,53 +27,26 @@ class Game {
     return aliveCharacters < 2;
   }
 
-  getRandomSpell(spells) {
-    let spellIndex = Math.floor(Math.random() * spells.length);
-    return spells[spellIndex];
+  handleUserTurn(spell, target) {
+    if (this.currentPlayer.isAlive()) {
+      this.currentPlayer.castSpell(spell, target);
+      this.endTurn();
+    }
   }
 
-  playTurn() {
-    let currentCharacter = this.getCurrentCharacter();
-
-    if (!currentCharacter.isAlive()) {
-      this.endTurn();
-      return;
-    }
-
-    let aliveCharacters = [];
-    for (let character of this.characters) {
-      if (character.isAlive() && character !== currentCharacter) {
-        aliveCharacters.push(character);
-      }
-    }
-
-    if (aliveCharacters.length === 0) {
-      return;
-    }
-
-    let targetIndex = Math.floor(Math.random() * aliveCharacters.length);
-    let target = aliveCharacters[targetIndex];
-
-    if (currentCharacter.mana > 0) {
-      let spell = this.getRandomSpell(currentCharacter.spells);
-      currentCharacter.castSpell(spell, target);
-    } else {
-      currentCharacter.autoAttack(target);
-    }
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 5000);
-    }).then(() => {
-      this.endTurn();
-    });
+  getOpponentPlayer() {
+    return this.characters.filter(
+      (character) => character !== this.currentPlayer
+    )[0];
   }
 
-  play() {
-    while (!this.isGameOver()) {
-      this.playTurn();
-    }
+  getRandomCharacter() {
+    return this.characters[Math.floor(Math.random() * this.characters.length)];
+  }
+
+  startGame() {
+    this.currentPlayer = this.getRandomCharacter();
+    this.opponentPlayer = this.getOpponentPlayer();
   }
 }
 

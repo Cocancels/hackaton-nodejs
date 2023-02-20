@@ -1,5 +1,6 @@
 class Character {
   constructor(
+    id,
     firstName,
     lastName,
     maxHealth = 100,
@@ -7,6 +8,7 @@ class Character {
     attack = 10,
     spells
   ) {
+    this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.maxHealth = maxHealth;
@@ -35,6 +37,10 @@ class Character {
 
   heal(heal) {
     this.health += heal;
+  }
+
+  getSpellFromId(id) {
+    return this.spells.find((spell) => spell.id === id);
   }
 
   castSpell(spell, character) {

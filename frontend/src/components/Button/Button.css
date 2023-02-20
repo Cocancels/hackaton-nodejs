@@ -11,18 +11,18 @@
   margin: 10px;
 }
 
-.attack {
-  background-color: #db4d349e;
-}
-
-.attack:hover {
+.damage {
   background-color: #db4d34;
 }
 
-.defense {
-  background-color: #323232b7;
+.damage:hover {
+  background-color: #db4d347c;
 }
 
-.defense:hover {
+.utility {
   background-color: #323232;
+}
+
+.utility:hover {
+  background-color: #323232bb;
 }

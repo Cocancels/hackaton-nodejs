@@ -5,14 +5,15 @@ import Reparo from "../classes/Spells/Reparo";
 import CharacterComponent from "../components/Character/Character";
 import Character from "../classes/character";
 import "./game.css";
+import Button from "../components/Button/Button";
 
 export const GamePage = () => {
-  let character1 = new Character("John", "Doe", 100, 100, 10, [
+  let character1 = new Character(0, "Harry", "Potter", 100, 100, 10, [
     new Incendio(),
     new Reparo(),
   ]);
 
-  let character2 = new Character("Jane", "Doe", 100, 100, 10, [
+  let character2 = new Character(1, "Hermione", "Granger", 100, 100, 10, [
     new Incendio(),
     new Reparo(),
   ]);
@@ -21,20 +22,51 @@ export const GamePage = () => {
     character1,
     character2,
   ]);
-  const [game, setGame] = useState<Game>(new Game());
-  const [turnInProgress, setTurnInProgress] = useState<boolean>(false);
+  const [game, setGame] = useState<Game>(new Game(characters));
+  const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
+  const [currentPlayer, setCurrentPlayer] = useState<Character>();
+  const [turn, setTurn] = useState<number>(0);
+  const [chooseTarget, setChooseTarget] = useState<boolean>(false);
+  const [selectedSpell, setSelectedSpell] = useState<number>(0);
+  const [target, setTarget] = useState<Character>();
 
-  const startGame = async () => {
-    characters.forEach((character) => {
-      game.addCharacter(character);
-    });
+  const handleStartGame = () => {
+    game.startGame();
+    setGame(game);
+    setIsGameStarted(true);
+    setCurrentPlayer(game.currentPlayer);
+  };
 
-    game.play();
+  const handleChoseSpell = (id: number) => {
+    setSelectedSpell(id);
+    setChooseTarget(true);
+  };
+
+  const handleSpellUse = (id: number, target: Character) => {
+    const spell = game.currentPlayer.getSpellFromId(id);
+    game.handleUserTurn(spell, target);
+    setGame(game);
+    setCurrentPlayer(game.currentPlayer);
+    setTurn(turn + 1);
+  };
+
+  const handleTargetSelection = (character: Character) => {
+    let target = character;
+    setTarget(target);
+    setChooseTarget(false);
+    handleSpellUse(selectedSpell, target);
   };
 
   useEffect(() => {
-    startGame();
-  }, []);
+    if (isGameStarted) {
+      if (game.currentPlayer.health <= 0) {
+        alert("Game Over");
+        setIsGameStarted(false);
+      } else {
+        setCurrentPlayer(game.currentPlayer);
+      }
+    }
+  }, [turn]);
 
   useEffect(() => {
     setCharacters(game.characters);
@@ -47,11 +79,40 @@ export const GamePage = () => {
         {characters.map((character, index) => {
           return (
             <div key={`character-${index}`}>
-              <CharacterComponent character={character} />
+              {isGameStarted && (
+                <CharacterComponent
+                  character={character}
+                  onClick={handleChoseSpell}
+                  isCurrentPlayer={character.id === currentPlayer?.id}
+                />
+              )}
             </div>
           );
         })}
       </div>
+      {!isGameStarted && (
+        <Button
+          onClick={() => handleStartGame()}
+          className="start-game"
+          label="Start Game"
+        />
+      )}
+      {
+        <div className="game-container">
+          {chooseTarget &&
+            characters.map((character, index) => {
+              return (
+                <div key={`character-${index}`}>
+                  <Button
+                    onClick={() => handleTargetSelection(character)}
+                    className="start-game"
+                    label={character.firstName}
+                  />
+                </div>
+              );
+            })}
+        </div>
+      }
     </div>
   );
 };
