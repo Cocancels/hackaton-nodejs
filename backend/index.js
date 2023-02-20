@@ -14,8 +14,8 @@ app.get("/", (req, res) => {
 });
 
 // Start the server and listen for incoming connections
-server.listen(3000, () => {
-  console.log("Server listening on port 3000");
+server.listen(3001, () => {
+  console.log("Server listening on port 3001");
 });
 
 // Listen for incoming socket connections
