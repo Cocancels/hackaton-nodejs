@@ -1,7 +1,7 @@
 import React from "react";
 
-const HealthBar = (props: { health: number }) => {
-  const { health } = props;
+const HealthBar = (props: { health: number; maxHealth: number }) => {
+  const { health, maxHealth } = props;
   const style = {
     width: `${health}%`,
     backgroundColor: health > 70 ? "green" : health > 30 ? "yellow" : "red",
@@ -13,7 +13,9 @@ const HealthBar = (props: { health: number }) => {
   return (
     <div>
       <div style={style}></div>
-      <p>{health}%</p>
+      <p>
+        {health} / {maxHealth}
+      </p>
     </div>
   );
 };

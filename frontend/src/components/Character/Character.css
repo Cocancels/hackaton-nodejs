@@ -1,11 +1,11 @@
-.character {
+/* .character {
   left: 20px;
   position: absolute;
   top: 30vh;
   height: 40vh;
   width: 20vw;
-}
+} */
 
 .character img {
-  height: 50%;
+  height: 200px;
 }

@@ -14,6 +14,7 @@ class Game {
 
   endTurn() {
     this.currentTurn = (this.currentTurn + 1) % this.characters.length;
+    console.log(`Turn ${this.currentTurn + 1} begins`);
   }
 
   isGameOver() {
@@ -60,7 +61,13 @@ class Game {
       currentCharacter.autoAttack(target);
     }
 
-    this.endTurn();
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 5000);
+    }).then(() => {
+      this.endTurn();
+    });
   }
 
   play() {
