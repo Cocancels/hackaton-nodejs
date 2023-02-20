@@ -1,35 +1,38 @@
 const express = require("express");
 const app = express();
-const db = require("./db");
+const http =  require("http");
+const cors =  require("cors");
+const { Server } = require("socket.io");
+// const database = require("./db");
+app.use(cors());
 
-// Create a new HTTP server using the express app
-const server = require("http").createServer(app);
+const server = http.createServer(app);
 
-// Create a new Socket.IO server using the HTTP server
-const io = require("socket.io")(server);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  }
+});
 
-// Define a route handler for the default home page
 app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
 
-// Start the server and listen for incoming connections
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("join_room", (data) => {
+    socket.join(data);
+  });
+
+  socket.on("send_message", (data) => {
+    socket.to(data.room).emit("receive_message", data);
+  });
+});
+
 server.listen(3001, () => {
   console.log("Server listening on port 3001");
 });
 
-// Listen for incoming socket connections
-io.on("connection", (socket) => {
-  console.log("A user connected");
 
-  // Listen for incoming chat messages
-  socket.on("chat message", (msg) => {
-    console.log("message: " + msg);
-    io.emit("chat message", msg);
-  });
-
-  // Listen for disconnect events
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
-  });
-});
