@@ -4,6 +4,10 @@ import Game from "./classes/game.js";
 import Character from "./classes/character.js";
 import Incendio from "./classes/Spells/Incendio";
 import Reparo from "./classes/Spells/Reparo";
+import "./App.css";
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import CreateUserForm from "./CreateUserForm";
+import NavBar from "./components/NavBar";
 
 function App() {
   let character1 = new Character("John", "Doe", 100, 100, 10, [
@@ -31,7 +35,13 @@ function App() {
 
   return (
     <div className="App">
-      <GamePage />
+      <Router>
+        <Routes>
+          <Route path="/" element={<NavBar />}></Route>
+
+          <Route path="/character" element={<CreateUserForm />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
