@@ -1,0 +1,28 @@
+.button {
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.attack {
+  background-color: #db4d349e;
+}
+
+.attack:hover {
+  background-color: #db4d34;
+}
+
+.defense {
+  background-color: #323232b7;
+}
+
+.defense:hover {
+  background-color: #323232;
+}
