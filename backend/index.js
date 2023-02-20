@@ -7,6 +7,24 @@ const server = require("http").createServer(app);
 // Create a new Socket.IO server using the HTTP server
 const io = require("socket.io")(server);
 
+const mysql = require("mysql");
+
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "hackaton_nodejs",
+});
+
+connection.connect((err) => {
+  if (err) {
+    console.error("Error connecting to database: " + err.stack);
+    return;
+  }
+
+  console.log("Connected to database as id " + connection.threadId);
+});
+
 // Define a route handler for the default home page
 app.get("/", (req, res) => {
   res.send("Hello, world!");
