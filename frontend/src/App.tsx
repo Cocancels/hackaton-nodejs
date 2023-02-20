@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { GamePage } from "./pages/Game";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CreateUserForm from "./CreateUserForm";
@@ -29,8 +29,6 @@ function App() {
               <NavBar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
             }
           />
-          <Route path="/rooms" element={<Socket />}></Route>
-
           <Route path="/character" element={<CreateUserForm />} />
           <Route path="/game" element={<GamePage />} />
           <Route path="/rooms" element={<Socket />} />
