@@ -23,11 +23,11 @@ function Socket() {
   };
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
+    socket.on("receive_message", (data: any) => {
       setMessageReceived(data.message);
     });
   }, [socket]);
-  
+
   return (
     <div>
       <input
