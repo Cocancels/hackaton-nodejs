@@ -8,6 +8,7 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import CreateUserForm from "./CreateUserForm";
 import NavBar from "./components/NavBar";
+import Socket from "./Socket";
 
 function App() {
   let character1 = new Character("John", "Doe", 100, 100, 10, [

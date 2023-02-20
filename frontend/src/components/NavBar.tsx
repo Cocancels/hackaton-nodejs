@@ -1,5 +1,4 @@
 import React from 'react';
-import '../App.css';
 import {Link} from "react-router-dom";
 const NavBar = () => {
     return (
@@ -8,7 +7,9 @@ const NavBar = () => {
                 <li>
                     <Link to="/">Home</Link>
                 </li>
-
+                <li>
+                    <Link to="/rooms">Rooms</Link>
+                </li>
                 <li>
                     <Link to="/character">Create account</Link>
                 </li>
