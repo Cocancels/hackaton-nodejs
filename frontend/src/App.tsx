@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from "react";
 import { GamePage } from "./pages/Game";
 import Game from "./classes/game.js";
@@ -5,6 +6,8 @@ import Character from "./classes/character.js";
 import Incendio from "./classes/Spells/Incendio";
 import Reparo from "./classes/Spells/Reparo";
 
+=======
+>>>>>>> main
 function App() {
   let character1 = new Character("John", "Doe", 100, 100, 10, [
     new Incendio(),
@@ -30,9 +33,13 @@ function App() {
   }, []);
 
   return (
+<<<<<<< HEAD
     <div className="App">
       <GamePage />
     </div>
+=======
+    <div className="App"></div>
+>>>>>>> main
   );
 }
 
