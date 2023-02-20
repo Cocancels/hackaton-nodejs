@@ -4,7 +4,6 @@ import Game from "./classes/game.js";
 import Character from "./classes/character.js";
 import Incendio from "./classes/Spells/Incendio";
 import Reparo from "./classes/Spells/Reparo";
-import "./App.css";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import CreateUserForm from "./CreateUserForm";
 import NavBar from "./components/NavBar";
@@ -39,6 +38,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<NavBar />}></Route>
+          <Route path="/rooms" element={<Socket />}></Route>
 
           <Route path="/character" element={<CreateUserForm />} />
         </Routes>
