@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-import { useState } from "react";
-import { Link } from "react-router-dom";
-=======
 import React, {useEffect, useState} from 'react';
 // import './App.css';
 import {Link} from "react-router-dom";
->>>>>>> rooms
 const CreateUserForm = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

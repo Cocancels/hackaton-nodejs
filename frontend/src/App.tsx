@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { GamePage } from "./pages/Game";
-import Socket from "./Socket";
+// import Socket from "./Socket";
 import LoginForm from "./components/User/LoginForm";
 import Game from "./classes/game.js";
 import Character from "./classes/character.js";
@@ -30,15 +30,15 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route
+          {/* <Route
             path="/"
             element={
               <NavBar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
             }
-          />
+          /> */}
           <Route path="/character" element={<CreateUserForm />} />
           <Route path="/game" element={<GamePage />} />
-          <Route path="/rooms" element={<Socket />} />
+          {/* <Route path="/rooms" element={<Socket />} /> */}
           {/* <Route path="/register" element={<CreateUserForm />} /> */}
           <Route path="/login" element={<LoginForm />} />
           <Route path="/" element={<NavBar />} />
