@@ -1,0 +1,42 @@
+nav {
+  background-color: #f2f2f2;
+  overflow: hidden;
+  font-size: 18px;
+  width: 100%;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+nav li {
+  float: left;
+}
+nav li:last-child {
+  float: right;
+}
+
+nav li a {
+  display: block;
+  padding: 15px;
+  color: #333;
+  text-align: center;
+  text-decoration: none;
+}
+
+nav li a:hover {
+  background-color: #ddd;
+}
+
+nav .active {
+  background-color: #4caf50;
+}
+
+nav .right {
+  float: right;
+}
