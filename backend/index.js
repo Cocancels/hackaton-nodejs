@@ -3,7 +3,7 @@ const app = express();
 const http =  require("http");
 const cors =  require("cors");
 const { Server } = require("socket.io");
-const database = require("./db");
+// const database = require("./db");
 const bcrypt = require('bcrypt');
 
 const bodyParser = require('body-parser')
@@ -14,8 +14,6 @@ app.use(cors());
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  // transports: ['websocket'], 
-  // upgrade: false,
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
