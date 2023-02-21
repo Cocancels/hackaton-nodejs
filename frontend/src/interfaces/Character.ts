@@ -10,4 +10,7 @@ export interface Character {
   mana: number;
   attack: number;
   spells: Spell[];
+  status: string[];
+  isProtected: number;
+  isStunned: number;
 }

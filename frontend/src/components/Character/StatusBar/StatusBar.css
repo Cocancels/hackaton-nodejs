@@ -1,0 +1,9 @@
+.status-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.status-bar {
+  display: flex;
+  gap: 10px;
+}

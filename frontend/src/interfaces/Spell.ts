@@ -4,4 +4,5 @@ export interface Spell {
   description: string;
   type: string;
   cost: number;
+  power: number;
 }

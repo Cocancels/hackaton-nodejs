@@ -2,20 +2,26 @@ import { useEffect, useState } from "react";
 import Game from "../classes/game";
 import Incendio from "../classes/Spells/Incendio";
 import Reparo from "../classes/Spells/Reparo";
+import Protego from "../classes/Spells/Protego";
 import CharacterComponent from "../components/Character/Character";
 import Character from "../classes/character";
 import "./game.css";
 import Button from "../components/Button/Button";
+import PetrificusTotalus from "../classes/Spells/PetrificusTotalus";
 
 export const GamePage = () => {
   let character1 = new Character(0, "Harry", "Potter", 100, 100, 10, [
     new Incendio(),
     new Reparo(),
+    new Protego(),
+    new PetrificusTotalus(),
   ]);
 
   let character2 = new Character(1, "Hermione", "Granger", 100, 100, 10, [
     new Incendio(),
     new Reparo(),
+    new Protego(),
+    new PetrificusTotalus(),
   ]);
 
   const [characters, setCharacters] = useState<Character[]>([
@@ -28,7 +34,6 @@ export const GamePage = () => {
   const [turn, setTurn] = useState<number>(0);
   const [chooseTarget, setChooseTarget] = useState<boolean>(false);
   const [selectedSpell, setSelectedSpell] = useState<number>(0);
-  const [target, setTarget] = useState<Character>();
 
   const handleStartGame = () => {
     game.startGame();
@@ -52,7 +57,6 @@ export const GamePage = () => {
 
   const handleTargetSelection = (character: Character) => {
     let target = character;
-    setTarget(target);
     setChooseTarget(false);
     handleSpellUse(selectedSpell, target);
   };
@@ -82,7 +86,7 @@ export const GamePage = () => {
               {isGameStarted && (
                 <CharacterComponent
                   character={character}
-                  onClick={handleChoseSpell}
+                  onSpellClick={handleChoseSpell}
                   isCurrentPlayer={character.id === currentPlayer?.id}
                 />
               )}

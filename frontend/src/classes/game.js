@@ -7,10 +7,9 @@ class Game {
   }
 
   endTurn() {
-    this.currentTurn = (this.currentTurn + 1) % this.characters.length;
+    this.currentTurn = this.currentTurn + 1;
     this.currentPlayer = this.opponentPlayer;
     this.opponentPlayer = this.getOpponentPlayer();
-    console.log(`Turn ${this.currentTurn + 1} begins`);
   }
 
   endGame() {
@@ -27,9 +26,41 @@ class Game {
     return aliveCharacters < 2;
   }
 
+  handleProtected() {
+    if (this.currentPlayer.isProtected > 0) {
+      this.currentPlayer.setProtected(this.currentPlayer.isProtected - 1);
+      console.log(
+        `${this.currentPlayer.firstName} ${this.currentPlayer.lastName} loses 1 turn of protection, ${this.currentPlayer.isProtected} left`
+      );
+
+      if (this.currentPlayer.isProtected == 0) {
+        this.currentPlayer.status = this.currentPlayer.status.filter(
+          (status) => status !== "protected"
+        );
+      }
+    }
+  }
+
+  handleStun() {
+    if (this.currentPlayer.isStunned > 0) {
+      this.currentPlayer.setStunned(this.currentPlayer.isStunned - 1);
+      console.log(
+        `${this.currentPlayer.firstName} ${this.currentPlayer.lastName} loses 1 turn of stun, ${this.currentPlayer.isStunned} left`
+      );
+
+      if (this.currentPlayer.isStunned == 0) {
+        this.currentPlayer.status = this.currentPlayer.status.filter(
+          (status) => status !== "stunned"
+        );
+      }
+    }
+  }
+
   handleUserTurn(spell, target) {
     if (this.currentPlayer.isAlive()) {
+      this.handleProtected();
       this.currentPlayer.castSpell(spell, target);
+      this.handleStun();
       this.endTurn();
     }
   }

@@ -7,12 +7,13 @@ class Incendio extends Spell {
       "Incendio",
       "Lance un incendie sur votre adversaire",
       "damage",
-      10
+      10,
+      20
     );
   }
 
   cast(character) {
-    character.takeDamage(10);
+    character.takeDamage(this.power);
   }
 }
 
