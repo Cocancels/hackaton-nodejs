@@ -67,12 +67,12 @@ io.on("connection", (socket) => {
     let index = rooms.findIndex(room => room.roomName === roomName);
     const roomUsers = rooms[index].users;
 
-    console.log(roomUsers[0])
+    console.log(roomUsers[0], user.username)
 
     if(index !== -1) {
 
-        if(roomUsers === user.username) {
-          let indexOfUser = roomUsers.indexOf(user)
+        if(roomUsers[0] === user.username) {
+          let indexOfUser = roomUsers.indexOf(user.username)
           roomUsers.splice(indexOfUser, 1);
         } 
 
