@@ -4,6 +4,8 @@ const CreateUserForm = () => {
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [nickName, setNickName] = useState("");
+    const [password, setPassword] = useState("");
     const [house, setHouse] = useState("Griffondord");
 
     const [errorMessage, setErrorMessage] = useState("");
@@ -13,10 +15,12 @@ const CreateUserForm = () => {
         let user = {
             firstName,
             lastName,
-            house
+            house,
+            nickName,
+            password
         }
 
-        if(firstName === "" || lastName === "" || house === ""){
+        if(firstName === "" || lastName === "" || house === "" || nickName === "" || password === ""){
             setErrorMessage("Merci de remplir tous les champs")
         }else{
             const requestOptions = {
@@ -55,13 +59,23 @@ const CreateUserForm = () => {
 
             <form onSubmit={sendForm}>
                 <label>
-                    First name:
+                    First name :
                     <input type="text" name="firstName" onChange={e => setFirstName(e.target.value)}/>
                 </label>
                 <br/><br/>
                 <label>
-                    Last name:
+                    Last name :
                     <input type="text" name="lastName" onChange={e => setLastName(e.target.value)}/>
+                </label>
+                <br/><br/>
+                <label>
+                    Nickname :
+                    <input type="text" name="nickName" onChange={e => setNickName(e.target.value)}/>
+                </label>
+                <br/><br/>
+                <label>
+                    Password :
+                    <input type="text" name="password" onChange={e => setPassword(e.target.value)}/>
                 </label>
                 <br/><br/>
                 <label>
