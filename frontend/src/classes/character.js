@@ -87,20 +87,29 @@ class Character {
 
     this.mana -= spell.getManaCost();
     spell.cast(character);
+<<<<<<< HEAD
 
     console.log(
       `${this.firstName} ${this.lastName} casts ${spell.name} on ${character.firstName} ${character.lastName}`
     );
+=======
+    // console.log(
+    //   `${this.firstName} ${this.lastName} casts ${spell.name} on ${character.firstName} ${character.lastName}`
+    // );
+    // console.log(
+    //   `${character.firstName} ${character.lastName} has ${character.health} health left`
+    // );
+>>>>>>> rooms
   }
 
   autoAttack(character) {
     character.takeDamage(this.attack);
-    console.log(
-      `${this.firstName} ${this.lastName} attacks ${character.firstName} ${character.lastName}`
-    );
-    console.log(
-      `${character.firstName} ${character.lastName} has ${character.health} health left`
-    );
+    // console.log(
+    //   `${this.firstName} ${this.lastName} attacks ${character.firstName} ${character.lastName}`
+    // );
+    // console.log(
+    //   `${character.firstName} ${character.lastName} has ${character.health} health left`
+    // );
   }
 }
 
