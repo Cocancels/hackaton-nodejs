@@ -1,19 +1,22 @@
 class Game {
-  constructor() {
-    this.characters = [];
+  constructor(characters) {
+    this.characters = characters;
     this.currentTurn = 0;
-  }
-
-  addCharacter(character) {
-    this.characters.push(character);
-  }
-
-  getCurrentCharacter() {
-    return this.characters[this.currentTurn];
+    this.currentPlayer = null;
+    this.opponentPlayer = null;
   }
 
   endTurn() {
-    this.currentTurn = (this.currentTurn + 1) % this.characters.length;
+    this.currentTurn = this.currentTurn + 1;
+    this.currentPlayer = this.opponentPlayer;
+    this.opponentPlayer = this.getOpponentPlayer();
+  }
+
+  endGame() {
+    return {
+      winner: this.getWinner(),
+      loser: this.getLoser(),
+    };
   }
 
   isGameOver() {
@@ -23,50 +26,70 @@ class Game {
         aliveCharacters++;
       }
     }
+
     return aliveCharacters < 2;
   }
 
-  getRandomSpell(spells) {
-    let spellIndex = Math.floor(Math.random() * spells.length);
-    return spells[spellIndex];
-  }
+  handleProtected() {
+    if (this.currentPlayer.isProtected > 0) {
+      this.currentPlayer.setProtected(this.currentPlayer.isProtected - 1);
+      console.log(
+        `${this.currentPlayer.firstName} ${this.currentPlayer.lastName} loses 1 turn of protection, ${this.currentPlayer.isProtected} left`
+      );
 
-  playTurn() {
-    let currentCharacter = this.getCurrentCharacter();
-
-    if (!currentCharacter.isAlive()) {
-      this.endTurn();
-      return;
-    }
-
-    let aliveCharacters = [];
-    for (let character of this.characters) {
-      if (character.isAlive() && character !== currentCharacter) {
-        aliveCharacters.push(character);
+      if (this.currentPlayer.isProtected === 0) {
+        this.currentPlayer.status = this.currentPlayer.status.filter(
+          (status) => status !== "protected"
+        );
       }
     }
-
-    if (aliveCharacters.length === 0) {
-      return;
-    }
-
-    let targetIndex = Math.floor(Math.random() * aliveCharacters.length);
-    let target = aliveCharacters[targetIndex];
-
-    if (currentCharacter.mana > 0) {
-      let spell = this.getRandomSpell(currentCharacter.spells);
-      currentCharacter.castSpell(spell, target);
-    } else {
-      currentCharacter.autoAttack(target);
-    }
-
-    this.endTurn();
   }
 
-  play() {
-    while (!this.isGameOver()) {
-      this.playTurn();
+  handleStun() {
+    if (this.currentPlayer.isStunned > 0) {
+      this.currentPlayer.setStunned(this.currentPlayer.isStunned - 1);
+      console.log(
+        `${this.currentPlayer.firstName} ${this.currentPlayer.lastName} loses 1 turn of stun, ${this.currentPlayer.isStunned} left`
+      );
+
+      if (this.currentPlayer.isStunned === 0) {
+        this.currentPlayer.status = this.currentPlayer.status.filter(
+          (status) => status !== "stunned"
+        );
+      }
     }
+  }
+
+  handleUserTurn(spell, target) {
+    if (this.currentPlayer.isAlive()) {
+      this.handleProtected();
+      this.currentPlayer.castSpell(spell, target);
+      this.handleStun();
+      this.endTurn();
+    }
+  }
+
+  getOpponentPlayer() {
+    return this.characters.filter(
+      (character) => character !== this.currentPlayer
+    )[0];
+  }
+
+  getRandomCharacter() {
+    return this.characters[Math.floor(Math.random() * this.characters.length)];
+  }
+
+  startGame() {
+    this.currentPlayer = this.getRandomCharacter();
+    this.opponentPlayer = this.getOpponentPlayer();
+  }
+
+  getWinner() {
+    return this.characters.filter((character) => character.isAlive())[0];
+  }
+
+  getLoser() {
+    return this.characters.filter((character) => !character.isAlive())[0];
   }
 }
 
