@@ -3,7 +3,11 @@ const app = express();
 const http =  require("http");
 const cors =  require("cors");
 const { Server } = require("socket.io");
-// const database = require("./db");
+const database = require("./db");
+
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 app.use(cors());
 
 const server = http.createServer(app);
@@ -18,6 +22,27 @@ const io = new Server(server, {
 app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
+
+app.post("/register",  (req, res) => {
+
+  let firstname = req.body.firstName;
+  let lastname = req.body.lastName;
+  let house = req.body.house;
+
+  const sql = `INSERT INTO users (firstname, lastname, house)
+       VALUES ('${firstname}','${lastname}', '${house}')`;
+
+  database.query(sql, (err, result) => {
+    if(err){
+      return res.status(404).json({ err });
+    }
+    res.send(result);
+
+  });
+
+
+});
+
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);

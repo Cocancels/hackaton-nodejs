@@ -5,9 +5,10 @@ import Character from "./classes/character.js";
 import Incendio from "./classes/Spells/Incendio";
 import Reparo from "./classes/Spells/Reparo";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
-import CreateUserForm from "./CreateUserForm";
+import CreateUserForm from "./components/User/CreateUserForm";
 import NavBar from "./components/NavBar";
 import Socket from "./Socket";
+import LoginForm from "./components/User/LoginForm";
 
 function App() {
   let character1 = new Character("John", "Doe", 100, 100, 10, [
@@ -37,10 +38,10 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<NavBar />}></Route>
-          <Route path="/rooms" element={<Socket />}></Route>
-
-          <Route path="/character" element={<CreateUserForm />} />
+          <Route path="/" element={<NavBar />} />
+          <Route path="/rooms" element={<Socket />} />
+          <Route path="/register" element={<CreateUserForm />} />
+          <Route path="/login" element={<LoginForm />} />
         </Routes>
       </Router>
     </div>

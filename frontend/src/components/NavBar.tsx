@@ -11,7 +11,10 @@ const NavBar = () => {
                     <Link to="/rooms">Rooms</Link>
                 </li>
                 <li>
-                    <Link to="/character">Create account</Link>
+                    <Link to="/register">Create account</Link>
+                </li>
+                <li>
+                    <Link to="/login">Login</Link>
                 </li>
             </ul>
         </nav>
