@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import Game from "../classes/game";
-import Incendio from "../classes/Spells/Incendio";
-import Reparo from "../classes/Spells/Reparo";
-import Protego from "../classes/Spells/Protego";
-import CharacterComponent from "../components/Character/Character";
-import Character from "../classes/character";
+import Game from "../../classes/game";
+import Incendio from "../../classes/Spells/Incendio";
+import Reparo from "../../classes/Spells/Reparo";
+import Protego from "../../classes/Spells/Protego";
+import CharacterComponent from "../../components/Character/Character";
+import Character from "../../classes/character";
 import "./game.css";
-import Button from "../components/Button/Button";
-import PetrificusTotalus from "../classes/Spells/PetrificusTotalus";
+import Button from "../../components/Button/Button";
+import PetrificusTotalus from "../../classes/Spells/PetrificusTotalus";
 
 export const GamePage = () => {
   let character1 = new Character(0, "Harry", "Potter", 100, 100, 10, [

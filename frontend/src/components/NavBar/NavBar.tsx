@@ -1,7 +1,22 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./NavBar.css";
-const NavBar = (props: any) => {
+const NavBar = () => {
+  const [actualUser, setActualUser] = useState<any>(null);
+
+  useEffect(() => {
+    const actualUser = localStorage.getItem("actualUser");
+
+    if (actualUser) {
+      setActualUser(JSON.parse(actualUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("actualUser");
+    setActualUser(null);
+  };
+
   return (
     <nav>
       <ul>
@@ -12,21 +27,29 @@ const NavBar = (props: any) => {
           <Link to="/rooms">Rooms</Link>
         </li>
         <li>
-          {props.isLoggedIn ? (
-            <li>
-              <button onClick={props.handleLogout}>Déconnexion</button>
-            </li>
-          ) : (
-            <>
-              <li>
-                <Link to="/character">Create account</Link>
-              </li>
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
-            </>
-          )}
+          <Link to="/game">Game</Link>
         </li>
+        {actualUser ? (
+          <>
+            <li>
+              <Link to="/account">{actualUser.nickname}</Link>
+            </li>
+            <li>
+              <Link to="/" onClick={handleLogout}>
+                Déconnexion
+              </Link>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <Link to="/character">Create account</Link>
+            </li>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );
