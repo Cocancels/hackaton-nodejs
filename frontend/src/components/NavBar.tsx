@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 const NavBar = () => {
   return (
@@ -11,10 +10,10 @@ const NavBar = () => {
           <Link to="/rooms">Rooms</Link>
         </li>
         <li>
-          <Link to="/character">Create account</Link>
+          <Link to="/register">Create account</Link>
         </li>
         <li>
-          <Link to="/game">Game</Link>
+          <Link to="/login">Login</Link>
         </li>
       </ul>
     </nav>
