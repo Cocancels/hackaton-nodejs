@@ -7,12 +7,11 @@ interface ButtonProps {
   onClick: () => void;
   className?: string;
   label: string;
-  description?: string;
   spell?: Spell;
 }
 
 function Button(props: ButtonProps) {
-  const { onClick, className, label, description, spell } = props;
+  const { onClick, className, label, spell } = props;
 
   const popover = (
     <Popover id="popover-basic">

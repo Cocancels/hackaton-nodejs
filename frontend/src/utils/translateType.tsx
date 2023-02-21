@@ -4,8 +4,8 @@ export const translate = (type: string) => {
       return "Dégâts";
     case "defense":
       return "Défense";
-    case "utility":
-      return "Utilitaire";
+    case "status":
+      return "Status";
     default:
       return type;
   }

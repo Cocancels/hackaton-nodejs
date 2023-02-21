@@ -12,7 +12,11 @@ export const StatusBar = (props: StatusBarProps) => {
       {status.map((status, index) => {
         return (
           <div key={`status-${index}`}>
-            <img className="status-icon" src={`/status/${status}.png`} />
+            <img
+              className="status-icon"
+              src={`/status/${status}.png`}
+              alt={""}
+            />
           </div>
         );
       })}

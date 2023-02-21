@@ -13,7 +13,10 @@ class Game {
   }
 
   endGame() {
-    console.log("Game over");
+    return {
+      winner: this.getWinner(),
+      loser: this.getLoser(),
+    };
   }
 
   isGameOver() {
@@ -23,6 +26,7 @@ class Game {
         aliveCharacters++;
       }
     }
+
     return aliveCharacters < 2;
   }
 
@@ -33,7 +37,7 @@ class Game {
         `${this.currentPlayer.firstName} ${this.currentPlayer.lastName} loses 1 turn of protection, ${this.currentPlayer.isProtected} left`
       );
 
-      if (this.currentPlayer.isProtected == 0) {
+      if (this.currentPlayer.isProtected === 0) {
         this.currentPlayer.status = this.currentPlayer.status.filter(
           (status) => status !== "protected"
         );
@@ -48,7 +52,7 @@ class Game {
         `${this.currentPlayer.firstName} ${this.currentPlayer.lastName} loses 1 turn of stun, ${this.currentPlayer.isStunned} left`
       );
 
-      if (this.currentPlayer.isStunned == 0) {
+      if (this.currentPlayer.isStunned === 0) {
         this.currentPlayer.status = this.currentPlayer.status.filter(
           (status) => status !== "stunned"
         );
@@ -78,6 +82,14 @@ class Game {
   startGame() {
     this.currentPlayer = this.getRandomCharacter();
     this.opponentPlayer = this.getOpponentPlayer();
+  }
+
+  getWinner() {
+    return this.characters.filter((character) => character.isAlive())[0];
+  }
+
+  getLoser() {
+    return this.characters.filter((character) => !character.isAlive())[0];
   }
 }
 

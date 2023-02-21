@@ -22,7 +22,7 @@ const CharacterComponent = (props: CharacterProps) => {
 
   return (
     <div className="character">
-      <img className="character-image" src={defaultImage} />
+      <img className="character-image" src={defaultImage} alt={""} />
       <div>
         <h2>
           {character.firstName} {character.lastName}
@@ -40,7 +40,6 @@ const CharacterComponent = (props: CharacterProps) => {
               onClick={() => handleSpellUse(spell.id)}
               className={`${spell.type}-button`}
               label={spell.name}
-              description={spell.description}
               spell={spell}
             />
           );

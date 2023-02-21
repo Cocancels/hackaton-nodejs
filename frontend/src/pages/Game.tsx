@@ -61,15 +61,20 @@ export const GamePage = () => {
     handleSpellUse(selectedSpell, target);
   };
 
-  useEffect(() => {
+  const handleEndGame = () => {
     if (isGameStarted) {
       if (game.currentPlayer.health <= 0) {
-        alert("Game Over");
+        console.log(game.endGame());
         setIsGameStarted(false);
+        setGame(new Game([character1, character2]));
       } else {
         setCurrentPlayer(game.currentPlayer);
       }
     }
+  };
+
+  useEffect(() => {
+    handleEndGame();
   }, [turn]);
 
   useEffect(() => {

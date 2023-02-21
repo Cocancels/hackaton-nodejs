@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CreateUserForm from "./CreateUserForm";
 import NavBar from "./components/NavBar";
 import { GamePage } from "./pages/Game";

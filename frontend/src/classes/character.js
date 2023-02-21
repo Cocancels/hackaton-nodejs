@@ -39,7 +39,7 @@ class Character {
   takeDamage(damage) {
     if (this.isProtected > 0) {
       this.isProtected--;
-      if (this.isProtected == 0) {
+      if (this.isProtected === 0) {
         this.status = this.status.filter((status) => status !== "protected");
       }
       console.log(
