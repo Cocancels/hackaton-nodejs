@@ -59,7 +59,6 @@ export const GamePage = () => {
       setActualRoom(room);
     });
   }, []);
-
   const fetchData = () => {
     const actualUser = localStorage.getItem("actualUser");
 
@@ -78,7 +77,6 @@ export const GamePage = () => {
         });
     }
   };
-
   const createClassCharacter = (user: User) => {
     const newCharacter = new Character(
       user.id,
@@ -92,13 +90,49 @@ export const GamePage = () => {
     return newCharacter;
   };
 
-  const handleStartGame = () => {
-    const game = new Game(characters, 0, null, null, false);
-    game.startGame();
-    setGame(game);
-    setCurrentPlayer(game.currentPlayer);
 
-    socket.emit("startGame", actualRoom, game);
+  const getUsersIds = async () => {
+    let users = actualRoom?.users
+    let usersIds: any[] = []
+
+    await fetch("https://hp-api-iim.azurewebsites.net/users")
+        .then(async (response) => {
+          const data = await response.json();
+          users?.map( async (user) => {
+            data?.map((dbUser: any) => {
+              if (user.nickname === dbUser.name) {
+                usersIds.push(dbUser.id)
+              }
+          })
+        })
+    })
+    return usersIds;
+  }
+
+  const handleStartGame = async () => {
+    let usersIds = await getUsersIds()
+
+    const body = {
+      game: "Wizard duel",
+      userIds: usersIds,
+      type: "1vs1"
+    }
+    const requestOptions = {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("userToken")},
+      body: JSON.stringify(body),
+    };
+    fetch("https://hp-api-iim.azurewebsites.net/matches/start", requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+        }).then(() =>  {
+            const game = new Game(characters, 0, null, null, false);
+            game.startGame();
+            setGame(game);
+            setCurrentPlayer(game.currentPlayer);
+
+            socket.emit("startGame", actualRoom, game);
+    })
   };
 
   const handleChoseSpell = (id: number) => {
