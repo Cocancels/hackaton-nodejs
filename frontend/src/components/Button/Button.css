@@ -58,7 +58,7 @@
 .damage-button {
   height: 60px;
   width: 200px;
-  font-size: 20px;
+  font-size: 18px;
   background-color: #be1616;
   transition: 0.3s;
 }
@@ -70,7 +70,7 @@
 .utility-button {
   height: 60px;
   width: 200px;
-  font-size: 20px;
+  font-size: 18px;
   transition: 0.3s;
   background-color: #119e1c;
 }
@@ -82,7 +82,7 @@
 .status-button {
   height: 60px;
   width: 200px;
-  font-size: 20px;
+  font-size: 18px;
   transition: 0.3s;
   background-color: #1955c5;
 }

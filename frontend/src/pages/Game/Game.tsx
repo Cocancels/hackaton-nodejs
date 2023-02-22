@@ -2,23 +2,28 @@ import { useEffect, useState } from "react";
 import Game from "../../classes/game";
 import CharacterComponent from "../../components/Character/Character";
 import Character from "../../classes/character";
-import { CharacterData } from "../../interfaces/Character";
 import "./game.css";
 import Button from "../../components/Button/Button";
-import { useParams } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import { Room } from "../../interfaces/Room";
 import Incendio from "../../classes/Spells/Incendio";
 import { io } from "socket.io-client";
-import { RoomInfos } from "./Rooms/RoomInfos/RoomInfos";
 import { RoomList } from "./Rooms/RoomsList/RoomList";
 import PetrificusTotalus from "../../classes/Spells/PetrificusTotalus";
-import { Spell } from "../../interfaces/Spell";
 import { UserInterface } from "./UserInterface/UserInterface";
+import Protego from "../../classes/Spells/Protego";
+import Reparo from "../../classes/Spells/Reparo";
+import Attackus from "../../classes/Spells/Attackus";
+import Avadakedavra from "../../classes/Spells/Avadakedavra";
 
 const socket = io("http://localhost:3001", {
   transports: ["websocket", "polling", "flashsocket"],
 });
+
+interface Results {
+  winner: Character;
+  looser: Character;
+}
 
 export const GamePage = () => {
   const [actualRoom, setActualRoom] = useState<Room>();
@@ -33,6 +38,7 @@ export const GamePage = () => {
   const [selectedSpell, setSelectedSpell] = useState<number>(0);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [spellUsed, setSpellUsed] = useState<boolean>(false);
+  const [results, setResults] = useState<Results>();
 
   useEffect(() => {
     fetchData();
@@ -60,6 +66,15 @@ export const GamePage = () => {
 
     socket.on("roomLeft", (room: Room) => {
       setActualRoom(room);
+    });
+
+    socket.on("disconnectedAll", (rooms: Room[]) => {
+      setRooms(rooms);
+      handleLeaveRoom();
+    });
+
+    socket.on("gameEnded", (results: Results) => {
+      setResults(results);
     });
   }, []);
 
@@ -95,7 +110,14 @@ export const GamePage = () => {
       user.character.maxHealth,
       user.character.maxMana,
       user.character.attack,
-      [new Incendio(), new PetrificusTotalus()]
+      [
+        new Attackus(),
+        new Incendio(),
+        new PetrificusTotalus(),
+        new Protego(),
+        new Reparo(),
+        new Avadakedavra(),
+      ]
     );
     return newCharacter;
   };
@@ -133,12 +155,12 @@ export const GamePage = () => {
 
   const handleEndGame = () => {
     if (isGameStarted) {
-      if (game?.currentPlayer.health <= 0) {
-        console.log(game?.endGame());
-        setIsGameStarted(false);
-      } else {
-        setCurrentPlayer(game?.currentPlayer);
-      }
+      characters.forEach((character: Character) => {
+        if (!character.isAlive()) {
+          const results = game?.endGame();
+          socket.emit("endGame", actualRoom, results);
+        }
+      });
     }
   };
 
@@ -163,15 +185,37 @@ export const GamePage = () => {
   const handleLeaveRoom = () => {
     socket.emit("leaveRoom", actualRoom, actualUser);
     setActualRoom(undefined);
+    resetGame();
+    actualUser && setActualUser({ ...actualUser, isReadyToPlay: false });
+  };
+
+  const resetGame = () => {
+    setGame(undefined);
     setCurrentPlayer(undefined);
     setCanGameStart(false);
     setIsGameStarted(false);
-    actualUser && setActualUser({ ...actualUser, isReadyToPlay: false });
+    setCharacters([]);
+    setTurn(0);
+    setSpellUsed(false);
+  };
+
+  const reorganizeCharacters = (characters: Character[]) => {
+    const currentCharacter = characters.find(
+      (character) => character.id === actualUser?.id
+    );
+
+    const filteredCharacters = characters.filter(
+      (character) => character.id !== actualUser?.id
+    );
+
+    filteredCharacters.unshift(currentCharacter!);
+
+    setCharacters(filteredCharacters);
   };
 
   useEffect(() => {
     handleEndGame();
-  }, [turn]);
+  }, [game]);
 
   useEffect(() => {
     if (actualRoom) {
@@ -180,7 +224,7 @@ export const GamePage = () => {
           createClassCharacter(user)
         );
 
-        setCharacters(newCharacters);
+        reorganizeCharacters(newCharacters);
       } else {
         const currentPlayer = characters.find(
           (character) => character.id === actualRoom.game?.currentPlayer.id
@@ -253,6 +297,12 @@ export const GamePage = () => {
         />
       )}
 
+      {results?.winner && (
+        <div>
+          <h1>Results : {results.winner.firstName} won !</h1>
+        </div>
+      )}
+
       <div className="game-characters-container">
         {actualRoom &&
           characters.map((character: Character, index: number) => (
@@ -265,6 +315,7 @@ export const GamePage = () => {
             />
           ))}
       </div>
+
       {actualRoom && (
         <UserInterface
           characters={characters}
@@ -280,6 +331,8 @@ export const GamePage = () => {
           onRoomClick={joinRoom}
           handleSetReady={handleSetReady}
           handleStartGame={handleStartGame}
+          socket={socket}
+          setActualRoom={setActualRoom}
         />
       )}
     </div>

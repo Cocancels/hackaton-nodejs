@@ -2,23 +2,13 @@ import "./ManaBar.css";
 
 const ManaBar = (props: { mana: number; maxMana: number }) => {
   const { mana, maxMana } = props;
-  const style = {
-    width: `${mana}%`,
-    backgroundColor: `rgb(0, 93, 255, ${mana / 100})`,
-    height: "40px",
-    transition: "width 0.2s ease-in-out",
-    border: "2px solid black",
-    borderRadius: "10px",
-    paddingLeft: "10px",
-    display: "flex",
-    alignItems: "center",
-  };
+
+  const fillWidth = `${(mana / maxMana) * 100}%`;
 
   return (
-    <div style={style}>
-      <p className="mana-bar-text">
-        {mana} / {maxMana}
-      </p>
+    <div className="mana-bar">
+      <div className="mana-bar__fill" style={{ width: fillWidth }} />
+      <div className="mana-bar__label">{`${mana}/${maxMana}`}</div>
     </div>
   );
 };
