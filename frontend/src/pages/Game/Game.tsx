@@ -231,6 +231,25 @@ export const GamePage = () => {
             characters.map((character: Character) => (
               <CharacterComponent key={character.id} character={character} />
             ))}
+          <div className="button-play-leave">
+            <div className="room-name">
+              <h2>{actualRoom ? actualRoom.name : "Room"}</h2>
+            </div>
+            {canGameStart && !isGameStarted && (
+              <Button
+                className="start-game"
+                onClick={handleStartGame}
+                label="Start Game"
+              />
+            )}
+            {actualRoom && (
+              <Button
+                className="leave-room"
+                onClick={handleLeaveRoom}
+                label="Leave Room"
+              />
+            )}
+          </div>
         </div>
         {currentPlayer && (
           <div className="game-players-container">
@@ -277,21 +296,6 @@ export const GamePage = () => {
                 );
               })}
           </div>
-        )}
-
-        {canGameStart && !isGameStarted && (
-          <Button
-            className="start-game"
-            onClick={handleStartGame}
-            label="Start Game"
-          />
-        )}
-        {actualRoom && (
-          <Button
-            className="leave-room"
-            onClick={handleLeaveRoom}
-            label="Leave Room"
-          />
         )}
       </div>
       {!actualRoom ? (
