@@ -16,6 +16,30 @@
   margin: 10px;
 }
 
+.start-game-button {
+  background-color: #2f9133;
+}
+
+.start-game-button:hover {
+  background-color: #4caf50ad;
+}
+
+.ready-button {
+  background-color: #2f9133;
+}
+
+.ready-button:hover {
+  background-color: #4caf50ad;
+}
+
+.not-ready-button {
+  background-color: #a80e0e;
+}
+
+.not-ready-button:hover {
+  background-color: #a80e0ead;
+}
+
 .button-disabled {
   background-color: #c0c0c0 !important;
   cursor: not-allowed;

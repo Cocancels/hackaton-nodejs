@@ -167,6 +167,19 @@ io.on("connection", (socket) => {
     io.to(actualRoom.id).emit("gameUpdated", actualRoom);
   });
 
+  socket.on("setReady", (actualRoom, actualUser) => {
+    let newActualUser;
+
+    actualRoom.users.map((user) => {
+      if (user.id === actualUser.id) {
+        user.isReadyToPlay = !user.isReadyToPlay;
+        newActualUser = user;
+      }
+    });
+
+    io.to(actualRoom.id).emit("readySet", actualRoom, newActualUser);
+  });
+
   socket.on("leaveRoom", (actualRoom, actualUser) => {
     rooms.map((room) => {
       if (room.id === actualRoom.id) {

@@ -69,9 +69,7 @@ export const GamePage = () => {
     if (actualUser) {
       const newActualUser = JSON.parse(actualUser);
 
-      console.log(newActualUser);
-
-      setActualUser(newActualUser);
+      setActualUser({ ...newActualUser, isReadyToPlay: false });
 
       fetch("http://localhost:3001/rooms")
         .then((res) => res.json())
@@ -79,6 +77,13 @@ export const GamePage = () => {
           checkIfUserIsInRooms(newActualUser, data.rooms);
           setRooms(data.rooms);
         });
+
+      socket.on("readySet", (room: Room, user: User) => {
+        setActualRoom(room);
+        if (user.id === newActualUser?.id) {
+          setActualUser(user);
+        }
+      });
     }
   };
 
@@ -155,20 +160,13 @@ export const GamePage = () => {
     });
   };
 
-  const handleCurrentPlayer = (id: number) => {
-    if (actualUser?.id === id && currentPlayer?.id === id) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   const handleLeaveRoom = () => {
     socket.emit("leaveRoom", actualRoom, actualUser);
     setActualRoom(undefined);
     setCurrentPlayer(undefined);
     setCanGameStart(false);
     setIsGameStarted(false);
+    actualUser && setActualUser({ ...actualUser, isReadyToPlay: false });
   };
 
   useEffect(() => {
@@ -233,17 +231,14 @@ export const GamePage = () => {
     }, 1000);
   };
 
+  const handleSetReady = () => {
+    socket.emit("setReady", actualRoom, actualUser);
+  };
+
   const isOdd = (num: number) => num % 2;
 
   return (
     <div className="game-container">
-      {canGameStart && !isGameStarted && (
-        <Button
-          className="start-game"
-          onClick={handleStartGame}
-          label="Start Game"
-        />
-      )}
       {actualRoom ? (
         <Button
           className="leave-room"
@@ -270,7 +265,7 @@ export const GamePage = () => {
             />
           ))}
       </div>
-      {isGameStarted && (
+      {actualRoom && (
         <UserInterface
           characters={characters}
           rooms={rooms}
@@ -283,6 +278,8 @@ export const GamePage = () => {
           handleTargetSelection={handleTargetSelection}
           onCreateRoomClick={createRoom}
           onRoomClick={joinRoom}
+          handleSetReady={handleSetReady}
+          handleStartGame={handleStartGame}
         />
       )}
     </div>

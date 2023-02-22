@@ -22,6 +22,7 @@ class Character {
     this.status = [];
     this.isProtected = 0;
     this.isStunned = 0;
+    this.isReady = false;
   }
 
   isAlive() {
