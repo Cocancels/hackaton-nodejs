@@ -16,9 +16,16 @@
 }
 
 .character-name {
-  margin-bottom: 10px;
-  padding: 3px 5px;
-  border-radius: 10px;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.character-name-current {
+  background-color: rgb(145, 208, 140);
+}
+.character-name-not-current {
+  background-color: rgb(208, 140, 140);
 }
 
 .character-image-container {
@@ -31,23 +38,31 @@
   height: 50vh;
   width: 100%;
   border-radius: 12px;
-  padding: 2%;
   overflow: hidden;
 }
 
 .character-image {
-  height: 75%;
+  height: 80%;
+}
+
+.flipped {
+  transform: scaleX(-1);
 }
 
 .character-info {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   width: 100%;
-  height: inherit;
+  height: 100px;
+  padding: 10px;
 }
 
 .character-info-bar {
+  background: linear-gradient(
+    rgba(0, 0, 0, 0),
+    70%,
+    rgba(255, 255, 255, 0.161)
+  );
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
