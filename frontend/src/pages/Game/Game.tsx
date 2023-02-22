@@ -13,6 +13,7 @@ import { io } from "socket.io-client";
 import { RoomInfos } from "./Rooms/RoomInfos/RoomInfos";
 import { RoomList } from "./Rooms/RoomsList/RoomList";
 import PetrificusTotalus from "../../classes/Spells/PetrificusTotalus";
+import { Spell } from "../../interfaces/Spell";
 
 const socket = io("http://localhost:3001", {
   transports: ["websocket", "polling", "flashsocket"],
@@ -162,6 +163,9 @@ export const GamePage = () => {
   const handleLeaveRoom = () => {
     socket.emit("leaveRoom", actualRoom, actualUser);
     setActualRoom(undefined);
+    setCurrentPlayer(undefined);
+    setCanGameStart(false);
+    setIsGameStarted(false);
   };
 
   useEffect(() => {
@@ -221,17 +225,45 @@ export const GamePage = () => {
 
   return (
     <div className="Game">
-      <h1>Game - Room</h1>
       <div className="game-container">
-        {actualRoom &&
-          characters.map((character: Character) => (
-            <CharacterComponent
-              key={character.id}
-              character={character}
-              isCurrentPlayer={handleCurrentPlayer(character.id)}
-              onSpellClick={handleChoseSpell}
-            />
-          ))}
+        <div className="game-characters-container">
+          {actualRoom &&
+            characters.map((character: Character) => (
+              <CharacterComponent key={character.id} character={character} />
+            ))}
+        </div>
+        {currentPlayer && (
+          <div className="game-players-container">
+            <p>Current player : {currentPlayer.firstName}</p>
+          </div>
+        )}
+        <div className="game-spells-container">
+          {isGameStarted &&
+            currentPlayer &&
+            characters.map((character: Character) => {
+              if (
+                character.id === currentPlayer.id &&
+                character.id === actualUser?.id
+              )
+                return (
+                  <div key={character.id} className="game-spells">
+                    {character.spells.map((spell: Spell) => {
+                      return (
+                        <Button
+                          key={spell.id}
+                          onClick={() => {
+                            handleChoseSpell(spell.id);
+                          }}
+                          className={`${spell.type}-button`}
+                          label={spell.name}
+                          spell={spell}
+                        />
+                      );
+                    })}
+                  </div>
+                );
+            })}
+        </div>
         {chooseTarget && (
           <div className="target-container">
             {actualRoom &&

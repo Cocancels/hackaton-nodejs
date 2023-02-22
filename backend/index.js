@@ -178,8 +178,8 @@ io.on("connection", (socket) => {
 
     const updatedRoom = rooms.find((room) => room.id === actualRoom.id);
 
-    io.to(actualRoom.id).emit("roomLeft", updatedRoom);
     socket.leave(actualRoom.id);
+    io.to(actualRoom.id).emit("roomLeft", updatedRoom);
   });
 });
 
