@@ -279,6 +279,13 @@ export const GamePage = () => {
           </div>
         )}
 
+        {canGameStart && !isGameStarted && (
+          <Button
+            className="start-game"
+            onClick={handleStartGame}
+            label="Start Game"
+          />
+        )}
         {actualRoom && (
           <Button
             className="leave-room"
