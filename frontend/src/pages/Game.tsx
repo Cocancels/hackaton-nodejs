@@ -34,7 +34,7 @@ export const GamePage = () => {
   const [turn, setTurn] = useState<number>(0);
   const [chooseTarget, setChooseTarget] = useState<boolean>(false);
   const [selectedSpell, setSelectedSpell] = useState<number>(0);
-
+  const [img, setImg] = useState<string>();
   const handleStartGame = () => {
     game.startGame();
     setGame(game);
@@ -53,6 +53,8 @@ export const GamePage = () => {
     setGame(game);
     setCurrentPlayer(game.currentPlayer);
     setTurn(turn + 1);
+    console.log(game.currentPlayer);
+    setImg((game.currentPlayer.avatarImg = "/img/hr-sort.gif"));
   };
 
   const handleTargetSelection = (character: Character) => {
@@ -84,6 +86,10 @@ export const GamePage = () => {
   return (
     <div className="Game">
       <h1>Game</h1>
+      <div className="background">
+        <img className="firstImage" src={img} alt="" />
+        <img className="secondImage" src={img} alt="" />
+      </div>
       <div className="game-container">
         {characters.map((character, index) => {
           return (

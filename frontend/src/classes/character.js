@@ -8,7 +8,8 @@ class Character {
     maxHealth = 100,
     maxMana = 0,
     attack = 10,
-    spells
+    spells,
+    avatarImg = "/img/hr-debout.gif"
   ) {
     this.id = id;
     this.firstName = firstName;
@@ -22,6 +23,7 @@ class Character {
     this.status = [];
     this.isProtected = 0;
     this.isStunned = 0;
+    this.avatarImg = avatarImg;
   }
 
   isAlive() {
@@ -87,7 +89,6 @@ class Character {
 
     this.mana -= spell.getManaCost();
     spell.cast(character);
-
     console.log(
       `${this.firstName} ${this.lastName} casts ${spell.name} on ${character.firstName} ${character.lastName}`
     );

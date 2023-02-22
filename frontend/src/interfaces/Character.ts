@@ -1,6 +1,7 @@
 import { Spell } from "./Spell";
 
 export interface Character {
+  avatarImg: string;
   id?: number;
   firstName: string;
   lastName: string;

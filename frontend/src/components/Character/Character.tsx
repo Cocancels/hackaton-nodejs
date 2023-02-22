@@ -13,8 +13,6 @@ interface CharacterProps {
 
 const CharacterComponent = (props: CharacterProps) => {
   const { character, isCurrentPlayer, onSpellClick } = props;
-  const defaultImage =
-    "https://3.bp.blogspot.com/-14UwUPZwa48/V1N5VPAv03I/AAAAAAAAFhk/QABZnaexs8Yv8tidLAqv-Sh8nI72I4dzgCLcB/s1600/Harry%252BPotter%252Brender1.png";
 
   const handleSpellUse = (id: number) => {
     onSpellClick(id);
@@ -22,7 +20,6 @@ const CharacterComponent = (props: CharacterProps) => {
 
   return (
     <div className="character">
-      <img className="character-image" src={defaultImage} alt={""} />
       <div>
         <h2>
           {character.firstName} {character.lastName}

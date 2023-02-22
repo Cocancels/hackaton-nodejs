@@ -6,3 +6,25 @@
 .start-game {
   background-color: rgb(31, 165, 31);
 }
+
+.background {
+  background-position: center bottom;
+  width: 100vw;
+  height: 50vh;
+  z-index: -10;
+  margin: auto;
+  background-size: cover;
+  background-image: url("../../public/img/bg.gif");
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 1% 5%;
+}
+
+.background img {
+  width: 20%;
+}
+
+.background .secondImage {
+  transform: scaleX(-1);
+}
