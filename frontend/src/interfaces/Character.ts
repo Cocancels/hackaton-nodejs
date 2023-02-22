@@ -1,6 +1,6 @@
 import { Spell } from "./Spell";
 
-export interface Character {
+export interface CharacterData {
   id?: number;
   firstName: string;
   lastName: string;
