@@ -1,5 +1,22 @@
-body {
-  background-color: rgb(37, 88, 82);
+.container-inscription {
+  background-color: rgb(102, 185, 175);
+  padding: 40px 10%;
+}
+
+.container-color-serp {
+  background-color: #1a472a !important;
+}
+
+.container-color-grif {
+  background-color: #740001 !important;
+}
+
+.container-color-serd {
+  background-color: #0e1a40 !important;
+}
+
+.container-color-pouf {
+  background-color: #ecb939 !important;
 }
 
 .harry-potter-form {
@@ -8,7 +25,6 @@ body {
   font-family: "Harry Potter", sans-serif;
   padding: 20px;
   border-radius: 10px;
-  margin: 20px;
 }
 
 .harry-potter-form h2 {
