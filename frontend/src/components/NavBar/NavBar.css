@@ -1,5 +1,5 @@
 nav {
-  background-color: transparent!important;
+  background-color: transparent !important;
   overflow: hidden;
   font-size: 18px;
   width: 100%;
@@ -17,13 +17,13 @@ nav ul {
 nav li:first-child {
   margin-right: auto;
 }
-nav li:first-child  a {
+nav li:first-child a {
   margin-right: auto;
   color: saddlebrown;
   font-weight: bolder;
   font-size: 1.4rem;
 }
-nav li:first-child  img {
+nav li:first-child img {
   width: 30px;
   margin-bottom: 5px;
 }
@@ -35,7 +35,7 @@ nav li:last-child {
 nav li a {
   display: block;
   padding: 15px;
-  color: #FFF;
+  color: #fff;
   text-align: center;
   text-decoration: none;
 }

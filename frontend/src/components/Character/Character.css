@@ -16,9 +16,9 @@
 }
 
 .character-name {
-  margin-bottom: 10px;
-  padding: 3px 5px;
-  border-radius: 10px;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
 }
 
 .character-image-container {
@@ -37,6 +37,10 @@
 
 .character-image {
   height: 75%;
+}
+
+.flipped {
+  transform: scaleX(-1);
 }
 
 .character-info {
