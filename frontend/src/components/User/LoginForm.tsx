@@ -37,7 +37,7 @@ const CreateUserForm = () => {
             }
             return Promise.reject(error);
           } else {
-            localStorage.setItem("userToken", JSON.stringify(data.token));
+            localStorage.setItem("userToken", (data.token));
           }
 
         })
