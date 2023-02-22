@@ -93,9 +93,16 @@ const CreateUserForm = () => {
   useEffect(() => {
     getHousesChoices();
   }, []);
-
+  console.log(house);
   return (
-    <div>
+    <div
+      className={`container-inscription container-color-${
+        (house === 1 && "serp") ||
+        (house === 2 && "grif") ||
+        (house === 3 && "serd") ||
+        (house === 4 && "pouf")
+      }`}
+    >
       <form onSubmit={sendForm} className="harry-potter-form">
         <h2>Inscription</h2>
         <label>
@@ -155,7 +162,16 @@ const CreateUserForm = () => {
         </label>
         <br />
         <br />
-        <input type="submit" value="Submit" />
+        <input
+          className={`container-color-${
+            (house === 1 && "serp") ||
+            (house === 2 && "grif") ||
+            (house === 3 && "serd") ||
+            (house === 4 && "pouf")
+          }`}
+          type="submit"
+          value="Submit"
+        />
 
         <p>{errorMessage}</p>
 
