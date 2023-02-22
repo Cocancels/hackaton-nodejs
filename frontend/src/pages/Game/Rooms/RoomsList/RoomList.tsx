@@ -1,5 +1,5 @@
 import { Room } from "../../../../interfaces/Room";
-
+import "./RoomList.css";
 interface RoomListProps {
   rooms: Room[];
   onRoomClick: (roomId: number) => void;
@@ -10,13 +10,19 @@ export const RoomList = (props: RoomListProps) => {
   const { rooms, onRoomClick, onCreateRoomClick } = props;
 
   return (
-    <div>
+    <div className="room-list">
       {rooms.map((room) => (
-        <div onClick={() => onRoomClick(room.id)} key={room.id}>
+        <div
+          className="room-button"
+          onClick={() => onRoomClick(room.id)}
+          key={room.id}
+        >
           <h2>{room.name}</h2>
         </div>
       ))}
-      <button onClick={onCreateRoomClick}>Create room</button>
+      <button className="create-room-button" onClick={onCreateRoomClick}>
+        Create room
+      </button>
     </div>
   );
 };
