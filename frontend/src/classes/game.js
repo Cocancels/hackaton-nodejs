@@ -1,9 +1,16 @@
 class Game {
-  constructor(characters) {
+  constructor(
+    characters,
+    currentTurn,
+    currentPlayer,
+    opponentPlayer,
+    isStarted
+  ) {
     this.characters = characters;
-    this.currentTurn = 0;
-    this.currentPlayer = null;
-    this.opponentPlayer = null;
+    this.currentTurn = currentTurn;
+    this.currentPlayer = currentPlayer;
+    this.opponentPlayer = opponentPlayer;
+    this.isStarted = isStarted;
   }
 
   endTurn() {
@@ -70,9 +77,9 @@ class Game {
   }
 
   getOpponentPlayer() {
-    return this.characters.filter(
-      (character) => character !== this.currentPlayer
-    )[0];
+    return this.characters.find(
+      (character) => character.id !== this.currentPlayer.id
+    );
   }
 
   getRandomCharacter() {
@@ -82,6 +89,7 @@ class Game {
   startGame() {
     this.currentPlayer = this.getRandomCharacter();
     this.opponentPlayer = this.getOpponentPlayer();
+    this.isStarted = true;
   }
 
   getWinner() {

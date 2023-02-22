@@ -1,4 +1,4 @@
-import { Character } from "../../interfaces/Character";
+import { CharacterData } from "../../interfaces/Character";
 import Button from "../Button/Button";
 import HealthBar from "../HealthBar/HealthBar";
 import ManaBar from "../ManaBar/HealthBar";
@@ -6,7 +6,7 @@ import "./Character.css";
 import { StatusBar } from "./StatusBar/StatusBar";
 
 interface CharacterProps {
-  character: Character;
+  character: CharacterData;
   isCurrentPlayer: boolean;
   onSpellClick: (id: number) => void;
 }

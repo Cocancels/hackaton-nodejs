@@ -4,9 +4,15 @@ import "./NavBar.css";
 const NavBar = () => {
   const [actualUser, setActualUser] = useState<any>(null);
 
+  window.addEventListener("storage", () => {
+    const actualUser = localStorage.getItem("actualUser");
+    if (actualUser) {
+      setActualUser(JSON.parse(actualUser));
+    }
+  });
+
   useEffect(() => {
     const actualUser = localStorage.getItem("actualUser");
-
     if (actualUser) {
       setActualUser(JSON.parse(actualUser));
     }
@@ -20,17 +26,11 @@ const NavBar = () => {
   return (
     <nav>
       <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/rooms">Rooms</Link>
-        </li>
-        <li>
-          <Link to="/game">Game</Link>
-        </li>
         {actualUser ? (
           <>
+            <li>
+              <Link to="/game">Game</Link>
+            </li>
             <li>
               <Link to="/account">{actualUser.nickname}</Link>
             </li>

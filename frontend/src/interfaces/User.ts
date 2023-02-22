@@ -1,5 +1,7 @@
+import { CharacterData } from "./Character";
+
 export interface User {
-  id: string;
+  id: number;
   firstname: string;
   lastname: string;
   nickname: string;
@@ -7,4 +9,5 @@ export interface User {
   wins: number;
   loses: number;
   house: string;
+  character: CharacterData;
 }

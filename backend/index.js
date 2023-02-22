@@ -1,3 +1,4 @@
+const database = require("./db");
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io", {
@@ -16,6 +17,14 @@ app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Credentials", true);
   next();
 });
+
+const bcrypt = require("bcrypt");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cors());
+
 const server = http.createServer(app);
 
 const io = socketIo(server);
@@ -42,13 +51,14 @@ app.post("/register", async (req, res) => {
 
   let hashPassword = await x;
 
-  const sql = `INSERT INTO users (firstname, lastname, house, wins, loses, nickname, password)
-               VALUES ('${firstname}', '${lastname}', '${house}', 0, 0, '${nickname}', '${hashPassword}')`;
+  const sql = `INSERT INTO users (firstname, lastname, house, wins, loses, nickname, password) VALUES ('${firstname}', '${lastname}', '${house}', 0, 0, '${nickname}', '${hashPassword}');
+               INSERT INTO user_character (user_id, maxHealth, maxMana, attack) VALUES (LAST_INSERT_ID(), 100, 100, 10);`;
 
   database.query(sql, (err, result) => {
     if (err) {
       return res.status(404).json({ err });
     }
+
     res.send(result);
   });
 });
@@ -58,17 +68,32 @@ app.post("/login", async (req, res) => {
   const password = req.body.password;
 
   const sql = `SELECT * FROM users WHERE nickname = '${nickname}'`;
+
+  let match = false;
+  let user;
+  let character;
+
   database.query(sql, async (err, result) => {
     if (err) {
       return res.status(404).json({ err });
     }
 
     if (result.length > 0) {
-      const user = result[0];
-      const match = await bcrypt.compare(password, user.password);
+      user = result[0];
+      match = await bcrypt.compare(password, user.password);
 
       if (match) {
-        return res.status(200).json({ user });
+        const sql2 = `SELECT * FROM user_character WHERE user_id = '${user.id}'`;
+
+        database.query(sql2, (err, result) => {
+          if (err) {
+            return res.status(404).json({ err });
+          }
+
+          character = result[0];
+          user = { ...user, character };
+          return res.status(200).json({ user });
+        });
       } else {
         return res.status(404).json({ err: "Wrong password" });
       }
@@ -78,73 +103,83 @@ app.post("/login", async (req, res) => {
   });
 });
 
-// Socket connection
-io.on("connection", (socket) => {
-  // console.log(`User connected with socket id ${socket.id}`);
+app.get("/rooms", (req, res) => {
+  return res.status(200).json({ rooms });
+});
 
-  // Get rooms list
-  socket.on("getRooms", () => {
-    socket.emit("updateRooms", rooms);
+app.post("/rooms/actualRoom", (req, res) => {
+  let actualUser = req.body.actualUser;
+  actualUser = JSON.parse(actualUser);
+
+  let actualRoom;
+
+  rooms.map((room) => {
+    room.users.map((user) => {
+      if (user.id === actualUser.id) {
+        actualRoom = room;
+      }
+    });
   });
 
-  // Create new room
-  socket.on("createRoom", (roomName) => {
-    let room = {
-      roomName: roomName,
+  return res.status(200).json({ actualRoom });
+});
+
+// Socket connection
+io.on("connection", (socket) => {
+  socket.on("createRoom", () => {
+    const room = {
+      id: rooms.length + 1,
       users: [],
+      name: "room" + (rooms.length + 1),
+      game: null,
+      messages: [],
     };
 
     rooms.push(room);
-    console.log(rooms);
-    socket.join(roomName);
-    io.to(roomName).emit("updateRooms", rooms);
+    socket.join(room.name);
+    io.emit("roomCreated", rooms);
   });
 
-  // Join a room
-  socket.on("joinRoom", (roomName, usersos) => {
-    if (usersos[0]) {
-      let index = rooms.findIndex((room) => room.roomName === roomName);
-      const roomUsers = rooms[index].users;
+  socket.on("joinRoom", (id, actualUser) => {
+    let actualRoom;
 
-      if (!roomUsers.includes(usersos[0].username)) {
-        roomUsers.push(usersos[0].username);
-        socket.join(roomName);
+    rooms.map((room) => {
+      if (room.id === id && room.users.length < 2) {
+        socket.join(id);
+
+        actualRoom = room;
+
+        return room.users.push(actualUser);
       }
-      io.to(roomName).emit("updateRooms", rooms);
-    }
+    });
+
+    io.to(id).emit("roomJoined", actualRoom);
   });
 
-  // Leave a room
-  socket.on("leaveRoom", (roomName, user) => {
-    let index = rooms.findIndex((room) => room.roomName === roomName);
-    const roomUsers = rooms[index].users;
-
-    console.log(roomUsers[0], user.username);
-
-    if (index !== -1) {
-      if (roomUsers[0] === user.username) {
-        let indexOfUser = roomUsers.indexOf(user.username);
-        roomUsers.splice(indexOfUser, 1);
-      }
-
-      rooms[index].users = roomUsers;
-      io.to(rooms[index].roomName).emit("updateUsers", rooms);
-    }
+  socket.on("startGame", (actualRoom, game) => {
+    actualRoom.game = game;
+    io.to(actualRoom.id).emit("gameStarted", actualRoom);
   });
 
-  // Listen for disconnection
-  socket.on("disconnect", () => {
-    console.log(`User disconnected with socket id ${socket.id}`);
+  socket.on("updateGame", (actualRoom, game) => {
+    actualRoom.game = game;
 
-    let index = rooms.findIndex((room) => room.users === socket.id);
-    if (index !== -1) {
-      const roomUsers = rooms[index].users;
+    io.to(actualRoom.id).emit("gameUpdated", actualRoom);
+  });
 
-      if (index !== -1) {
-        roomUsers.splice(index, 1);
-        io.to(rooms[index].roomName).emit("updateUsers", rooms);
+  socket.on("leaveRoom", (actualRoom, actualUser) => {
+    rooms.map((room) => {
+      if (room.id === actualRoom.id) {
+        room.users = room.users.filter((user) => user.id !== actualUser.id);
+
+        return room;
       }
-    }
+    });
+
+    const updatedRoom = rooms.find((room) => room.id === actualRoom.id);
+
+    io.to(actualRoom.id).emit("roomLeft", updatedRoom);
+    socket.leave(actualRoom.id);
   });
 });
 

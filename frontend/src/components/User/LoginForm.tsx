@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CreateUserForm = () => {
   const [nickName, setFirstName] = useState("");
   const [password, setPassword] = useState("");
-
   const [errorMessage, setErrorMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const sendForm = (event: any) => {
     let body = {
@@ -25,13 +26,7 @@ const CreateUserForm = () => {
       fetch("http://localhost:3001/login", requestOptions)
         .then(async (response) => {
           const data = await response.json();
-
-          if (!response.ok) {
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
-          } else {
-            localStorage.setItem("actualUser", JSON.stringify(data.user));
-          }
+          handleLocalStorage(data);
         })
         .catch((error) => {
           setErrorMessage(error.toString());
@@ -39,6 +34,12 @@ const CreateUserForm = () => {
     }
 
     event.preventDefault();
+  };
+
+  const handleLocalStorage = (data: any) => {
+    localStorage.setItem("actualUser", JSON.stringify(data.user));
+    window.dispatchEvent(new Event("storage"));
+    navigate("/game");
   };
 
   return (

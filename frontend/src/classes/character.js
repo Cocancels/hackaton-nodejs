@@ -18,7 +18,7 @@ class Character {
     this.health = maxHealth;
     this.mana = maxMana;
     this.attack = attack;
-    this.spells = [new Attackus(), ...spells];
+    this.spells = spells || [new Attackus()];
     this.status = [];
     this.isProtected = 0;
     this.isStunned = 0;
@@ -87,22 +87,22 @@ class Character {
 
     this.mana -= spell.getManaCost();
     spell.cast(character);
-    // console.log(
-    //   `${this.firstName} ${this.lastName} casts ${spell.name} on ${character.firstName} ${character.lastName}`
-    // );
-    // console.log(
-    //   `${character.firstName} ${character.lastName} has ${character.health} health left`
-    // );
+    console.log(
+      `${this.firstName} ${this.lastName} casts ${spell.name} on ${character.firstName} ${character.lastName}`
+    );
+    console.log(
+      `${character.firstName} ${character.lastName} has ${character.health} health left`
+    );
   }
 
   autoAttack(character) {
     character.takeDamage(this.attack);
-    // console.log(
-    //   `${this.firstName} ${this.lastName} attacks ${character.firstName} ${character.lastName}`
-    // );
-    // console.log(
-    //   `${character.firstName} ${character.lastName} has ${character.health} health left`
-    // );
+    console.log(
+      `${this.firstName} ${this.lastName} attacks ${character.firstName} ${character.lastName}`
+    );
+    console.log(
+      `${character.firstName} ${character.lastName} has ${character.health} health left`
+    );
   }
 }
 
