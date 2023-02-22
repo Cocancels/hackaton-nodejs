@@ -65,78 +65,123 @@ app.post("/login",  async (req, res) => {
 
 });
 
-// Socket connection
 io.on("connection", (socket) => {
   console.log(`User connected with socket id ${socket.id}`);
 
-  // Get rooms list
-  socket.on("getRooms", () => {
-    socket.emit("updateRooms", rooms);
-  });
+  io.emit("rooms", rooms);
 
-  // Create new room
-  socket.on("createRoom", (roomName) => {
-    let room = {
-      roomName: roomName,
-      users: [],
-    };
+  socket.on("newRoom", (data) => {
+    const { newRoom } = data;
 
-    rooms.push(room);
-    socket.join(roomName);
-    io.emit("updateRooms", rooms);
-  });
+    rooms.push({
+      room: newRoom,
+      users: []
+    })
 
-  // Join a room
-  socket.on("joinRoom", ( roomName, usersos ) => {
+    io.emit("rooms", rooms);
+  })
 
-    if(usersos[0]) {
-      let index = rooms.findIndex(room => room.roomName === roomName);
-      const roomUsers = rooms[index].users;
+  socket.on("updateRoom", (data) => {
+    const { roomName, storedUser } = data;
+
+    let index = rooms.findIndex(room => room.room === roomName);
   
-      if (!roomUsers.includes(usersos[0].username)) {
-        roomUsers.push(usersos[0].username);
-        socket.join(roomName);
+    if(index !== -1) {
+  
+      let roomUsers = rooms[index].users;
+      let user = roomUsers.find(u => u.name === storedUser);
+      if(!user) {
+        user = { name: storedUser, data: {
+          health: 100
+        } };
+        roomUsers.push(user);
       }
-      io.to(roomName).emit("updateRooms", rooms);
+  
+      io.emit("rooms", rooms);
     }
-
   });
 
-  // Leave a room
-  socket.on("leaveRoom", (roomName, user) => {
-    
-    let index = rooms.findIndex(room => room.roomName === roomName);
-    const roomUsers = rooms[index].users;
+  socket.on("leaveRoom", (data) => {
+    const { roomName, storedUser } = data;
 
-    console.log(roomUsers[0], user.username)
+    let index = rooms.findIndex(room => room.room === roomName);
 
     if(index !== -1) {
-
-        if(roomUsers[0] === user.username) {
-          let indexOfUser = roomUsers.indexOf(user.username)
-          roomUsers.splice(indexOfUser, 1);
-        } 
-
-        rooms[index].users = roomUsers;
-        io.to(rooms[index].roomName).emit("updateUsers", rooms);
+      let roomUsers = rooms[index].users;
+      let userIndex = roomUsers.findIndex(user => user.name === storedUser);
+      if(userIndex !== -1) {
+        roomUsers.splice(userIndex, 1);
+      }
     }
 
+    io.emit("rooms", rooms);
   });
 
-  // Listen for disconnection
+  socket.on("userPunched", (data) => {
+    const { roomName, puncher } = data;
+
+    let index = rooms.findIndex(room => room.room === roomName);
+    
+    if(index !== -1) {
+      let roomUsers = rooms[index].users;
+      let puncherIndex = roomUsers.findIndex(user => user.name === puncher);
+      if(puncherIndex !== -1) {
+        let punchedIndex = roomUsers.findIndex(user => user.name !== puncher);
+        if(punchedIndex !== -1) {
+          if(rooms[index].users[punchedIndex].data.health !== 0)
+            rooms[index].users[punchedIndex].data.health -= 10;
+        }
+      }
+    }
+
+    io.emit("rooms", rooms);
+  });
+
+  socket.on("userHealed", (data) => {
+    const { roomName, toBeHealed } = data;
+
+    let index = rooms.findIndex(room => room.room === roomName);
+    
+    if(index !== -1) {
+      let roomUsers = rooms[index].users;
+      let toBeHealedIndex = roomUsers.findIndex(user => user.name === toBeHealed);
+      if(toBeHealedIndex !== -1) {
+        if(rooms[index].users[toBeHealedIndex].data.health < 100)
+          rooms[index].users[toBeHealedIndex].data.health += 10;
+      }
+    }
+
+    io.emit("rooms", rooms);
+  });
+
+  socket.on('newMessage', (data) => {
+    const { roomName, sender, content, timestamp } = data;
+
+    // Find the room with the given name
+    const roomIndex = rooms.findIndex(room => room.room === roomName);
+    if (roomIndex === -1) {
+      // Room does not exist
+      return;
+    }
+  
+    // Get the users in the room
+    const roomUsers = rooms[roomIndex].users;
+  
+    // Find the user who sent the message
+    const senderIndex = roomUsers.findIndex(user => user.name === sender);
+    if (senderIndex === -1) {
+      // User does not exist in the room
+      return;
+    }
+  
+    // Broadcast the message to all other users in the room
+    const messageData = { sender, content, timestamp };
+    io.emit('message', messageData);
+  });
+  
+
   socket.on("disconnect", () => {
     console.log(`User disconnected with socket id ${socket.id}`);
-
-    let index = rooms.findIndex(room => room.users === socket.id);
-    if(index !== -1) {
-      const roomUsers = rooms[index].users;
-
-      if (index !== -1) {
-        roomUsers.splice(index, 1);
-        io.to(rooms[index].roomName).emit("updateUsers", rooms);
-      }
-    }
-
   });
 });
 
