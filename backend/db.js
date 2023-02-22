@@ -3,8 +3,9 @@ const mysql = require("mysql");
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "root",
   database: "hackaton_nodejs",
+  port: "8889",
   multipleStatements: true,
 });
 
