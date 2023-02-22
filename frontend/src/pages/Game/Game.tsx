@@ -266,6 +266,7 @@ export const GamePage = () => {
               character={character}
               flip={isOdd(index) ? true : false}
               isAttacking={spellUsed}
+              actualUser={actualUser}
             />
           ))}
       </div>

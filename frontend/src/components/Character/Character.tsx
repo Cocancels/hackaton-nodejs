@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Character from "../../classes/character";
 import { CharacterData } from "../../interfaces/Character";
-import Button from "../Button/Button";
+import { User } from "../../interfaces/User";
 import HealthBar from "../HealthBar/HealthBar";
-import ManaBar from "../ManaBar/HealthBar";
+import ManaBar from "../ManaBar/ManaBar";
 import "./Character.css";
 import { StatusBar } from "./StatusBar/StatusBar";
 
@@ -11,11 +11,11 @@ interface CharacterProps {
   character: CharacterData;
   flip?: boolean;
   isAttacking?: boolean;
-  playerAttacking?: Character;
+  actualUser?: User | undefined;
 }
 
 const CharacterComponent = (props: CharacterProps) => {
-  const { character, flip, isAttacking, playerAttacking } = props;
+  const { character, flip, isAttacking, actualUser } = props;
 
   const [image, setImage] = useState<string>("/images/hr-debout.gif");
 
@@ -35,9 +35,10 @@ const CharacterComponent = (props: CharacterProps) => {
   return (
     <div className="character-container">
       <div className="character">
-        <div className={`character-name`}>
-          <h2>
-            {character.firstName} {character.lastName}
+        <div className={`character-name-container`}>
+          <h2 className="character-name">
+            {character.firstName} {character.lastName}{" "}
+            {actualUser?.id === character.id && "(You)"}
           </h2>
         </div>
         <div className="character-image-container">

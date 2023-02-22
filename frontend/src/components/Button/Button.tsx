@@ -43,15 +43,13 @@ function Button(props: ButtonProps) {
 
   return (
     <div className="button-relative-container">
-      <OverlayTrigger
-        placement="right"
-        delay={{ show: 50, hide: 0 }}
-        overlay={spell ? popover : <></>}
-      >
+      <OverlayTrigger placement="top" overlay={spell ? popover : <></>}>
         <button
           onClick={onClick}
           className={
-            disabled ? "button button-disabled" : `button ${className}`
+            disabled
+              ? `button ${className ? className : ""} button-disabled`
+              : `button ${className ? className : ""}`
           }
           disabled={disabled ? disabled : false}
         >

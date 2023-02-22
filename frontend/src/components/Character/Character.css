@@ -17,9 +17,9 @@
 }
 
 .character-name {
-  margin-bottom: 10px;
-  padding: 3px 5px;
-  border-radius: 10px;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
 }
 
 .character-name-current {

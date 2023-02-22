@@ -17,7 +17,7 @@
 }
 
 .button-disabled {
-  background-color: #c0c0c0;
+  background-color: #c0c0c0 !important;
   cursor: not-allowed;
 }
 
@@ -32,6 +32,9 @@
 }
 
 .damage-button {
+  height: 60px;
+  width: 200px;
+  font-size: 20px;
   background-color: #be1616;
   transition: 0.3s;
 }
@@ -41,6 +44,9 @@
 }
 
 .utility-button {
+  height: 60px;
+  width: 200px;
+  font-size: 20px;
   transition: 0.3s;
   background-color: #119e1c;
 }
@@ -50,6 +56,9 @@
 }
 
 .status-button {
+  height: 60px;
+  width: 200px;
+  font-size: 20px;
   transition: 0.3s;
   background-color: #1955c5;
 }
