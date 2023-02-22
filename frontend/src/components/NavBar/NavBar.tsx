@@ -43,6 +43,9 @@ const NavBar = () => {
         ) : (
           <>
             <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
               <Link to="/character">Create account</Link>
             </li>
             <li>
