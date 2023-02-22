@@ -14,6 +14,7 @@ import { RoomInfos } from "./Rooms/RoomInfos/RoomInfos";
 import { RoomList } from "./Rooms/RoomsList/RoomList";
 import PetrificusTotalus from "../../classes/Spells/PetrificusTotalus";
 import { Spell } from "../../interfaces/Spell";
+import { UserInterface } from "./UserInterface/UserInterface";
 
 const socket = io("http://localhost:3001", {
   transports: ["websocket", "polling", "flashsocket"],
@@ -31,6 +32,7 @@ export const GamePage = () => {
   const [chooseTarget, setChooseTarget] = useState<boolean>(false);
   const [selectedSpell, setSelectedSpell] = useState<number>(0);
   const [characters, setCharacters] = useState<Character[]>([]);
+  const [spellUsed, setSpellUsed] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData();
@@ -113,6 +115,7 @@ export const GamePage = () => {
     setCurrentPlayer(game?.currentPlayer);
     setGame(game);
     setTurn(turn + 1);
+    handleSpellAnimation();
 
     socket.emit("updateGame", actualRoom, game);
   };
@@ -223,85 +226,63 @@ export const GamePage = () => {
     game?.isStarted === true && setCharacters(game?.characters);
   }, [game]);
 
-  return (
-    <div className="Game">
-      <div className="game-container">
-        <div className="game-characters-container">
-          {actualRoom &&
-            characters.map((character: Character) => (
-              <CharacterComponent key={character.id} character={character} />
-            ))}
-        </div>
-        {currentPlayer && (
-          <div className="game-players-container">
-            <p>Current player : {currentPlayer.firstName}</p>
-          </div>
-        )}
-        <div className="game-spells-container">
-          {isGameStarted &&
-            currentPlayer &&
-            characters.map((character: Character) => {
-              if (
-                character.id === currentPlayer.id &&
-                character.id === actualUser?.id
-              )
-                return (
-                  <div key={character.id} className="game-spells">
-                    {character.spells.map((spell: Spell) => {
-                      return (
-                        <Button
-                          key={spell.id}
-                          onClick={() => {
-                            handleChoseSpell(spell.id);
-                          }}
-                          className={`${spell.type}-button`}
-                          label={spell.name}
-                          spell={spell}
-                        />
-                      );
-                    })}
-                  </div>
-                );
-            })}
-        </div>
-        {chooseTarget && (
-          <div className="target-container">
-            {actualRoom &&
-              characters.map((character: Character) => {
-                return (
-                  <Button
-                    key={character.id}
-                    label={character.firstName}
-                    onClick={() => handleTargetSelection(character)}
-                  />
-                );
-              })}
-          </div>
-        )}
+  const handleSpellAnimation = () => {
+    setSpellUsed(true);
+    setTimeout(() => {
+      setSpellUsed(false);
+    }, 1000);
+  };
 
-        {canGameStart && !isGameStarted && (
-          <Button
-            className="start-game"
-            onClick={handleStartGame}
-            label="Start Game"
-          />
-        )}
-        {actualRoom && (
-          <Button
-            className="leave-room"
-            onClick={handleLeaveRoom}
-            label="Leave Room"
-          />
-        )}
-      </div>
-      {!actualRoom ? (
+  const isOdd = (num: number) => num % 2;
+
+  return (
+    <div className="game-container">
+      {canGameStart && !isGameStarted && (
+        <Button
+          className="start-game"
+          onClick={handleStartGame}
+          label="Start Game"
+        />
+      )}
+      {actualRoom ? (
+        <Button
+          className="leave-room"
+          onClick={handleLeaveRoom}
+          label="Leave Room"
+        />
+      ) : (
         <RoomList
           rooms={rooms}
           onCreateRoomClick={createRoom}
           onRoomClick={joinRoom}
         />
-      ) : (
-        <RoomInfos room={actualRoom} />
+      )}
+
+      <div className="game-characters-container">
+        {actualRoom &&
+          characters.map((character: Character, index: number) => (
+            <CharacterComponent
+              key={character.id}
+              character={character}
+              flip={isOdd(index) ? true : false}
+              isAttacking={spellUsed}
+            />
+          ))}
+      </div>
+      {isGameStarted && (
+        <UserInterface
+          characters={characters}
+          rooms={rooms}
+          currentPlayer={currentPlayer}
+          actualUser={actualUser}
+          actualRoom={actualRoom}
+          isGameStarted={isGameStarted}
+          chooseTarget={chooseTarget}
+          handleChoseSpell={handleChoseSpell}
+          handleTargetSelection={handleTargetSelection}
+          onCreateRoomClick={createRoom}
+          onRoomClick={joinRoom}
+        />
       )}
     </div>
   );

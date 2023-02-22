@@ -46,6 +46,10 @@
   height: 80%;
 }
 
+.flipped {
+  transform: scaleX(-1);
+}
+
 .character-info {
   display: flex;
   flex-direction: column;

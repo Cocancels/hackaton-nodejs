@@ -8,39 +8,36 @@ interface ButtonProps {
   className?: string;
   label: string;
   spell?: Spell;
+  disabled?: boolean;
 }
 
 function Button(props: ButtonProps) {
-  const { onClick, className, label, spell } = props;
+  const { onClick, className, label, spell, disabled } = props;
 
   const popover = (
     <Popover id="popover-basic">
-      {spell && (
-        <>
-          <Popover.Header as="h3">
-            {spell.name} - {translate(spell.type)}
-          </Popover.Header>
-          <Popover.Body>
-            <ul>
-              <li>
-                <p className="spell-description">{spell.description}</p>
-              </li>
-              <li>
-                <p className="spell-cost">
-                  <span className="spell-cost-label">Coût : </span>
-                  <span className="spell-cost-value">{spell.cost} mana</span>
-                </p>
-              </li>
-              <li>
-                <p className="spell-power">
-                  <span className="spell-power-label">Puissance : </span>
-                  <span className="spell-power-value">{spell.power}</span>
-                </p>
-              </li>
-            </ul>
-          </Popover.Body>
-        </>
-      )}
+      <Popover.Header as="h3">
+        {spell?.name} - {translate(spell?.type)}
+      </Popover.Header>
+      <Popover.Body>
+        <ul>
+          <li>
+            <p className="spell-description">{spell?.description}</p>
+          </li>
+          <li>
+            <p className="spell-cost">
+              <span className="spell-cost-label">Coût : </span>
+              <span className="spell-cost-value">{spell?.cost} mana</span>
+            </p>
+          </li>
+          <li>
+            <p className="spell-power">
+              <span className="spell-power-label">Puissance : </span>
+              <span className="spell-power-value">{spell?.power}</span>
+            </p>
+          </li>
+        </ul>
+      </Popover.Body>
     </Popover>
   );
 
@@ -48,10 +45,16 @@ function Button(props: ButtonProps) {
     <div className="button-relative-container">
       <OverlayTrigger
         placement="right"
-        delay={{ show: 100, hide: 100 }}
-        overlay={popover}
+        delay={{ show: 50, hide: 0 }}
+        overlay={spell ? popover : <></>}
       >
-        <button onClick={onClick} className={`button ${className}`}>
+        <button
+          onClick={onClick}
+          className={
+            disabled ? "button button-disabled" : `button ${className}`
+          }
+          disabled={disabled ? disabled : false}
+        >
           {label}
         </button>
       </OverlayTrigger>

@@ -1,3 +1,9 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
 .game-characters-container {
   display: flex;
   justify-content: space-around;
@@ -5,4 +11,18 @@
 
 .start-game {
   background-color: rgb(31, 165, 31);
+  transition: 0.3s;
+}
+
+.start-game:hover {
+  background-color: rgba(31, 165, 31, 0.637);
+}
+
+.leave-room {
+  background-color: rgb(165, 31, 31);
+  transition: 0.3s;
+}
+
+.leave-room:hover {
+  background-color: rgba(165, 31, 31, 0.637);
 }

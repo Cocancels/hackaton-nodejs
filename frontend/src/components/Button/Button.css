@@ -16,6 +16,11 @@
   margin: 10px;
 }
 
+.button-disabled {
+  background-color: #c0c0c0;
+  cursor: not-allowed;
+}
+
 .description-container {
   position: absolute;
   top: 0;
