@@ -67,7 +67,7 @@ export const GamePage = () => {
     if (actualUser) {
       const newActualUser = JSON.parse(actualUser);
 
-      console.log(newActualUser)
+      console.log(newActualUser);
 
       setActualUser(newActualUser);
 
@@ -278,24 +278,15 @@ export const GamePage = () => {
               })}
           </div>
         )}
+
+        {actualRoom && (
+          <Button
+            className="leave-room"
+            onClick={handleLeaveRoom}
+            label="Leave Room"
+          />
+        )}
       </div>
-
-      {canGameStart && !isGameStarted && (
-        <Button
-          className="start-game"
-          onClick={handleStartGame}
-          label="Start Game"
-        />
-      )}
-
-      {actualRoom && (
-        <Button
-          className="leave-room"
-          onClick={handleLeaveRoom}
-          label="Leave Room"
-        />
-      )}
-
       {!actualRoom ? (
         <RoomList
           rooms={rooms}
