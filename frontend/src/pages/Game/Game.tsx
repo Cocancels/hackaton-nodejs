@@ -66,6 +66,8 @@ export const GamePage = () => {
     if (actualUser) {
       const newActualUser = JSON.parse(actualUser);
 
+      console.log(newActualUser)
+
       setActualUser(newActualUser);
 
       fetch("http://localhost:3001/rooms")

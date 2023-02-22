@@ -1,16 +1,51 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 const CreateUserForm = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [nickName, setNickName] = useState("");
   const [password, setPassword] = useState("");
-  const [house, setHouse] = useState("Griffondord");
-
+  const [house, setHouse] = useState(1);
+  const [housesChoices, setHousesChoices] = useState([{id : 0, name : ""}]);
   const [errorMessage, setErrorMessage] = useState("");
   const [displayLoginContainer, setDisplayLoginContainer] = useState(false);
+  const [registeredUser, setRegisteredUser] = useState({house : {name : ''}, name : ''});
 
+  const createUserOnExternalApi = () =>{
+    //registration on external api
+    let user = {
+      name : nickName,
+      password : password,
+      houseId : house,
+    }
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    };
+    fetch("https://hp-api-iim.azurewebsites.net/auth/register", requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          if (!response.ok) {
+            const error = (data && data.message) || response.statusText;
+            return Promise.reject(error);
+          } else {
+            setRegisteredUser(data)
+            setDisplayLoginContainer(true);
+          }
+        })
+        .catch((error) => {
+          setErrorMessage("Cet utilisateur existe déjà, veuillez vous connecter.")
+        });
+  }
   const sendForm = (event: any) => {
+    createUser()
+    createUserOnExternalApi()
+    event.preventDefault();
+  };
+  const createUser = () => {
     let user = {
       firstName,
       lastName,
@@ -18,13 +53,11 @@ const CreateUserForm = () => {
       nickName,
       password,
     };
-
     if (
-      firstName === "" ||
-      lastName === "" ||
-      house === "" ||
-      nickName === "" ||
-      password === ""
+        firstName === "" ||
+        lastName === "" ||
+        nickName === "" ||
+        password === ""
     ) {
       setErrorMessage("Merci de remplir tous les champs");
     } else {
@@ -35,24 +68,22 @@ const CreateUserForm = () => {
       };
       setErrorMessage("");
       fetch("http://localhost:3001/register", requestOptions)
+          .then(async (response) => {
+            const data = await response.json();
+          })
+    }
+  }
+  const getHousesChoices = () => {
+    fetch("https://hp-api-iim.azurewebsites.net/houses")
         .then(async (response) => {
           const data = await response.json();
-
-          if (!response.ok) {
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
-          } else {
-            console.log(user);
-            setDisplayLoginContainer(true);
-          }
+          setHousesChoices(data)
         })
-        .catch((error) => {
-          setErrorMessage(error.toString());
-        });
-    }
+  }
 
-    event.preventDefault();
-  };
+  useEffect(() => {
+    getHousesChoices()
+  }, [])
 
   return (
     <div>
@@ -103,16 +134,14 @@ const CreateUserForm = () => {
         <br />
         <label>
           House :
+          <span>{house}</span>
           <select
-            defaultValue={"Griffondord"}
-            name="house"
-            onChange={(e) => setHouse(e.target.value)}
+              value={house}
+              onChange={(e) => setHouse(parseInt(e.target.value))}
           >
-            <option value="Griffondord">Griffondord</option>
-            <option value="Serpentard">Serpentard</option>
-            <option value="Pouffsouffle">Pouffsouffle</option>
-            <option value="Serdaigle">Serdaigle</option>
+            {housesChoices.map((house, index) => <option key={index} value={house.id} >{house.name}</option>)}
           </select>
+
         </label>
         <br />
         <br />
@@ -122,7 +151,7 @@ const CreateUserForm = () => {
 
         {displayLoginContainer ? (
           <div>
-            <p>Merci pour votre inscription {firstName} !</p>
+            <p>Bienvenue chez {registeredUser.house.name}, {registeredUser.name} !</p>
             <Link to="/login">Se connecter</Link>
           </div>
         ) : (
