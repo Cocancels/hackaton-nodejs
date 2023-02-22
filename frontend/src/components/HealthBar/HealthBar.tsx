@@ -8,11 +8,13 @@ const HealthBar = (props: { health: number; maxHealth: number }) => {
     height: "20px",
     transition: "width 0.2s ease-in-out",
     borderRadius: "20px",
+    paddingLeft: "10px",
+    display: "flex",
+    alignItems: "center",
   };
 
   return (
-    <div>
-      <div style={style}></div>
+    <div style={style}>
       <p>
         {health} / {maxHealth}
       </p>
