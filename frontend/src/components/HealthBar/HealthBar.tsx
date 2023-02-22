@@ -4,7 +4,7 @@ const HealthBar = (props: { health: number; maxHealth: number }) => {
   const { health, maxHealth } = props;
   const style = {
     width: `${health}%`,
-    backgroundColor: health > 70 ? "green" : health > 30 ? "yellow" : "red",
+    background: health > 70 ? "rgb(70, 164, 126)" : health > 30 ? "rgb(247, 141, 90)" : "rgb(207, 0, 1)",
     height: "20px",
     transition: "width 0.2s ease-in-out",
     borderRadius: "20px",
@@ -16,7 +16,13 @@ const HealthBar = (props: { health: number; maxHealth: number }) => {
   return (
     <div style={style}>
       <p>
-        {health} / {maxHealth}
+        <img src="https://i.ibb.co/GxrMrZg/tournoi.png" alt="" style={{ 
+          width: '30px',
+          background: health > 70 ? "rgb(70, 164, 126)" : health > 30 ? "rgb(247, 141, 90)" : "rgb(207, 0, 1)",
+          borderRadius: '50%',
+          marginRight: '5px',
+          }} />
+       {health} / {maxHealth}
       </p>
     </div>
   );

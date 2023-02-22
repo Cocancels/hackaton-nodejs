@@ -16,7 +16,6 @@
 }
 
 .character-name {
-  background-color: rgb(208, 140, 140);
   margin-bottom: 10px;
   padding: 3px 5px;
   border-radius: 10px;
@@ -49,11 +48,6 @@
 }
 
 .character-info-bar {
-  background: linear-gradient(
-    rgba(0, 0, 0, 0),
-    70%,
-    rgba(255, 255, 255, 0.161)
-  );
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;

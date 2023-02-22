@@ -14,6 +14,12 @@ const ManaBar = (props: { mana: number; maxMana: number }) => {
   return (
     <div style={style}>
       <p>
+        <img src="https://i.ibb.co/f1N34X6/mana.png" alt="" style={{ 
+          width: '30px',
+          background: `rgb(0, 93, 255, ${mana / 100})`,
+          borderRadius: '50%',
+          marginRight: '5px',
+          }} />
         {mana} / {maxMana}
       </p>
     </div>

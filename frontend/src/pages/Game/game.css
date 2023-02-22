@@ -1,7 +1,15 @@
+.Game {
+  padding: 2rem 2rem 2rem 1rem;
+  background: #2B262E !important;
+}
+
 .game-characters-container {
   display: flex;
   justify-content: space-around;
-  background-color: rgb(32, 32, 32);
+}
+
+.game-characters-container .character-container:last-of-type h2 {
+  text-align: right!important;
 }
 
 .start-game {

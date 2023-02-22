@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+
 li {
   list-style: none;
 }
@@ -5,4 +7,10 @@ li {
 * {
   padding: 0;
   margin: 0;
+}
+
+body {
+  font-family: 'DotGothic16', sans-serif !important ;
+  background:#2B262E !important;
+  color: #FFF !important;
 }

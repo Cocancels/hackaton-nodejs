@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import Game from "../../classes/game";
-import CharacterComponent from "../../components/Character/Character";
 import Character from "../../classes/character";
-import { CharacterData } from "../../interfaces/Character";
-import "./game.css";
+import CharacterComponent from "../../components/Character/Character";
 import Button from "../../components/Button/Button";
-import { useParams } from "react-router-dom";
-import { User } from "../../interfaces/User";
-import { Room } from "../../interfaces/Room";
 import Incendio from "../../classes/Spells/Incendio";
+import PetrificusTotalus from "../../classes/Spells/PetrificusTotalus";
+
+import "./game.css";
+
+import { User } from "../../interfaces/User";
 import { io } from "socket.io-client";
+import { Room } from "../../interfaces/Room";
 import { RoomInfos } from "./Rooms/RoomInfos/RoomInfos";
 import { RoomList } from "./Rooms/RoomsList/RoomList";
-import PetrificusTotalus from "../../classes/Spells/PetrificusTotalus";
 import { Spell } from "../../interfaces/Spell";
+
 
 const socket = io("http://localhost:3001", {
   transports: ["websocket", "polling", "flashsocket"],
@@ -231,9 +232,11 @@ export const GamePage = () => {
             characters.map((character: Character) => (
               <CharacterComponent key={character.id} character={character} />
             ))}
-          <div className="button-play-leave">
+        </div>
+
+        <div className="button-play-leave">
             <div className="room-name">
-              <h2>{actualRoom ? actualRoom.name : "Room"}</h2>
+              <h2>{actualRoom ? actualRoom.name : ""}</h2>
             </div>
             {canGameStart && !isGameStarted && (
               <Button
@@ -250,7 +253,7 @@ export const GamePage = () => {
               />
             )}
           </div>
-        </div>
+
         {currentPlayer && (
           <div className="game-players-container">
             <p>Current player : {currentPlayer.firstName}</p>
@@ -298,6 +301,7 @@ export const GamePage = () => {
           </div>
         )}
       </div>
+
       {!actualRoom ? (
         <RoomList
           rooms={rooms}
