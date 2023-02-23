@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import "./LoginForm.css";
 const CreateUserForm = () => {
   const [nickName, setFirstName] = useState("");
   const [password, setPassword] = useState("");
@@ -10,8 +10,8 @@ const CreateUserForm = () => {
 
   const sendForm = (event: any) => {
     let body = {
-      name : nickName,
-      password : password,
+      name: nickName,
+      password: password,
     };
 
     if (nickName === "" || password === "") {
@@ -30,41 +30,40 @@ const CreateUserForm = () => {
           if (!response.ok) {
             let error = (data && data.message) || response.statusText;
 
-            if(response.status === 500){
-              error = "Mot de passe incorrect."
-            }else if(response.status === 404){
-              error = "Cet utilisateur n'existe pas, veuillez créer un compte."
+            if (response.status === 500) {
+              error = "Mot de passe incorrect.";
+            } else if (response.status === 404) {
+              error = "Cet utilisateur n'existe pas, veuillez créer un compte.";
             }
             return Promise.reject(error);
           } else {
-            localStorage.setItem("userToken",data.token);
+            localStorage.setItem("userToken", data.token);
           }
-
         })
 
-          .then(async (response) => {
-            let body = {
-              nickName,
-              password,
-            };
+        .then(async (response) => {
+          let body = {
+            nickName,
+            password,
+          };
 
-            const requestOptions = {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(body),
-            };
-            setErrorMessage("");
-            fetch("http://localhost:3001/login", requestOptions)
-                .then(async (response) => {
-                  const data = await response.json();
-                  handleLocalStorage(data);
-                })
-                .catch((error) => {
-                  setErrorMessage(error.toString());
-                });
-          })
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          };
+          setErrorMessage("");
+          fetch("http://localhost:3001/login", requestOptions)
+            .then(async (response) => {
+              const data = await response.json();
+              handleLocalStorage(data);
+            })
+            .catch((error) => {
+              setErrorMessage(error.toString());
+            });
+        })
 
-          .catch((error) => {
+        .catch((error) => {
           setErrorMessage(error);
         });
     }
@@ -78,11 +77,9 @@ const CreateUserForm = () => {
 
   return (
     <div>
-      <Link to="/">Retour</Link>
+      <form onSubmit={sendForm} className="harry-potter-form">
+        <h2>Connexion</h2>
 
-      <p>Login</p>
-
-      <form onSubmit={sendForm}>
         <label>
           Nick name:
           <input
@@ -104,13 +101,12 @@ const CreateUserForm = () => {
         <br />
         <br />
 
-        <br />
-        <br />
         <input type="submit" value="Submit" />
 
         <p>{errorMessage}</p>
-
-        <Link to="/register">S'inscrire</Link>
+        <div className="inscription-link">
+          Pas de compte ?<Link to="/character"> S'inscrire</Link>
+        </div>
       </form>
     </div>
   );
