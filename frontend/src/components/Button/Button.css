@@ -105,3 +105,14 @@
   background-color: #c0c0c0 !important;
   cursor: not-allowed;
 }
+
+.target-container {
+  margin: 5rem auto;
+}
+.button-target {
+  background-color: #25EAE4;
+  box-shadow: 0 3px 14px #3bd4c784;
+  font-weight: bold;
+  outline: 0;
+  border: 0;
+}

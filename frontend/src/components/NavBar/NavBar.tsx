@@ -29,7 +29,10 @@ const NavBar = () => {
         {actualUser ? (
           <>
             <li>
-              <Link to="/game">Game</Link>
+              <Link to="/game">
+                <img src="https://i.ibb.co/J5k9TGc/potter-hat.png" alt="" />
+                HarryTour
+              </Link>
             </li>
             <li>
               <Link to="/" onClick={handleLogout}>

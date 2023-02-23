@@ -88,8 +88,9 @@ export const SpellSelection = (props: SpellSelectionProps) => {
               characters.map((character: Character) => {
                 return (
                   <Button
+                    className="button-target"
                     key={character.id}
-                    label={character.firstName}
+                    label={character.id === currentPlayer?.id ? `${character.firstName} (You)` : character.firstName}
                     onClick={() => handleTargetSelection(character)}
                   />
                 );

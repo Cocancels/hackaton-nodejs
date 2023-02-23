@@ -370,15 +370,14 @@ export const GamePage = () => {
           onClick={handleLeaveRoom}
           label="Leave Room"
         />
-      ) : (
-        <RoomList
-          rooms={rooms}
-          onCreateRoomClick={createRoom}
-          onRoomClick={joinRoom}
-        />
+      ) : ( 
+        actualUser &&
+          <RoomList
+            rooms={rooms}
+            onCreateRoomClick={createRoom}
+            onRoomClick={joinRoom}
+          />
       )}
-
-      <p onClick={() => socket.emit("disconnectAll")}>Test</p>
 
       {results?.winner && (
         <div className="results-modal">
