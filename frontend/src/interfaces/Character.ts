@@ -14,4 +14,5 @@ export interface CharacterData {
   isProtected: number;
   isStunned: number;
   nickName : string;
+  isReady: boolean;
 }

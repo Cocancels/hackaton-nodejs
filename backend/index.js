@@ -3,7 +3,7 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io", {
   cors: {
-    origin: "http://localhost:3001",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });
@@ -167,6 +167,36 @@ io.on("connection", (socket) => {
     io.to(actualRoom.id).emit("gameUpdated", actualRoom);
   });
 
+  socket.on("setReady", (actualRoom, actualUser) => {
+    let newActualUser;
+
+    actualRoom.users.map((user) => {
+      if (user.id === actualUser.id) {
+        user.isReadyToPlay = !user.isReadyToPlay;
+        newActualUser = user;
+      }
+    });
+
+    io.to(actualRoom.id).emit("readySet", actualRoom, newActualUser);
+  });
+
+  socket.on("sendMessage", (actualRoom, message) => {
+    const newMessage = { ...message, createdAt: new Date() };
+
+    const updatedRoom =
+      rooms.find((room) => room.id === actualRoom.id) || actualRoom;
+
+    updatedRoom.messages.push(newMessage);
+
+    rooms.map((room) => {
+      if (room.id === actualRoom.id) {
+        room.messages = updatedRoom.messages;
+      }
+    });
+
+    io.to(actualRoom.id).emit("messageSent", updatedRoom.messages);
+  });
+
   socket.on("leaveRoom", (actualRoom, actualUser) => {
     rooms.map((room) => {
       if (room.id === actualRoom.id) {
@@ -180,6 +210,19 @@ io.on("connection", (socket) => {
 
     socket.leave(actualRoom.id);
     io.to(actualRoom.id).emit("roomLeft", updatedRoom);
+  });
+
+  socket.on("disconnectAll", () => {});
+
+  socket.on("endGame", (actualRoom, results) => {
+    const { winner, loser } = results;
+
+    const sql = `UPDATE users SET wins = wins + 1 WHERE id = '${winner.id}';
+                  UPDATE users SET loses = loses + 1 WHERE id = '${loser.id}';`;
+
+    database.query(sql);
+
+    io.to(actualRoom.id).emit("gameEnded", results);
   });
 });
 

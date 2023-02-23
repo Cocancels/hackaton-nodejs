@@ -24,6 +24,7 @@ class Character {
     this.isProtected = 0;
     this.isStunned = 0;
     this.nickName = nickName;
+    this.isReady = false;
   }
 
   isAlive() {
