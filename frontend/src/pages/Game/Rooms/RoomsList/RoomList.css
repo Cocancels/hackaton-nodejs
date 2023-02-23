@@ -16,16 +16,18 @@
 }
 
 .room-list .room-button {
-  background-color: rgb(140, 226, 224);
+  background-color: rgb(244, 250, 205);
   border-radius: 12px;
   box-shadow: 0px 8px 12px rgb(55, 55, 55);
   padding: 20px 25px;
   cursor: pointer;
   transition-duration: 1s;
+  color: black;
 }
 
 .room-list .room-button:hover {
-  background-color: rgb(248, 248, 248);
+  background-color: black;
+  color: wheat;
 }
 
 .room-list .room-button h2 {

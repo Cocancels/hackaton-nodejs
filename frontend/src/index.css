@@ -20,9 +20,12 @@ input {
 }
 
 .container-inscription {
-  background-color: rgb(102, 185, 175);
   padding: 40px 10%;
   transition-duration: 1s;
+}
+
+.container-color-undefined {
+  background-color: rgb(26, 63, 114);
 }
 
 .container-color-serp {
@@ -49,7 +52,6 @@ input {
 
 body {
   font-family: "DotGothic16", sans-serif !important ;
-  background: #2b262e !important;
   color: #fff !important;
 }
 

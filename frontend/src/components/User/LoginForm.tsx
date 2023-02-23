@@ -76,8 +76,8 @@ const CreateUserForm = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={sendForm} className="harry-potter-form">
+    <div className="container-inscription">
+      <form onSubmit={sendForm} className=" harry-potter-form">
         <h2>Connexion</h2>
 
         <label>

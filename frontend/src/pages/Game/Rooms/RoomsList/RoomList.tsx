@@ -22,8 +22,6 @@ export const RoomList = (props: RoomListProps) => {
     if (actualUser) {
       const newActualUser = JSON.parse(actualUser);
 
-      console.log(newActualUser);
-
       setActualUser(newActualUser);
 
       fetch("http://localhost:3001/rooms").then((res) => res.json());

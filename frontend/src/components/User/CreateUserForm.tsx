@@ -93,7 +93,6 @@ const CreateUserForm = () => {
   useEffect(() => {
     getHousesChoices();
   }, []);
-  console.log(house);
   return (
     <div
       className={`container-inscription container-color-${
