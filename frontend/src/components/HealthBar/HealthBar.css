@@ -36,3 +36,10 @@
   color: white;
   font-size: 12px;
 }
+.health-bar-text {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}

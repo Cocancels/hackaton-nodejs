@@ -1,4 +1,5 @@
 import "./HealthBar.css";
+import "./HealthBar.css";
 
 const HealthBar = (props: { health: number; maxHealth: number }) => {
   const { health, maxHealth } = props;
