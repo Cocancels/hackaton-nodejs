@@ -1,12 +1,8 @@
-.Game {
-  padding: 2rem 2rem 2rem 1rem;
-  background: #2b262e !important;
-}
-
 .game-container {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
+  background-color: rgb(36, 34, 34);
 }
 
 .game-characters-container {
@@ -16,18 +12,41 @@
 
 .start-game {
   background-color: rgb(31, 165, 31);
+  transition: 0.3s;
 }
 
-.room-name {
-  background-color: rgb(140, 185, 208);
-  margin-bottom: 10px;
-  padding: 3px 5px;
-  border-radius: 10px;
+.start-game:hover {
+  background-color: rgba(31, 165, 31, 0.637);
 }
 
-.button-play-leave {
-  padding: 10px 0;
+.leave-room {
+  background-color: rgb(165, 31, 31);
+  transition: 0.3s;
+}
+
+.leave-room:hover {
+  background-color: rgba(165, 31, 31, 0.637);
+}
+
+.results-modal {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.results-modal-content {
+  width: 50%;
+  background-color: white;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: space-around;
+  color: black;
 }

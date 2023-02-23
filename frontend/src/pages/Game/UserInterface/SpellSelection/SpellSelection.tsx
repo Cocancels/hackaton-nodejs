@@ -46,7 +46,7 @@ export const SpellSelection = (props: SpellSelectionProps) => {
               characters.map((character: Character) => {
                 if (character.id === currentPlayer.id)
                   return (
-                    <>
+                    <div key={character.id}>
                       {isActualUser(character) ? (
                         <div className="character-turn">
                           <h2>{character.firstName}, c'est à toi !</h2>
@@ -76,7 +76,7 @@ export const SpellSelection = (props: SpellSelectionProps) => {
                           );
                         })}
                       </div>
-                    </>
+                    </div>
                   );
               })}
           </div>

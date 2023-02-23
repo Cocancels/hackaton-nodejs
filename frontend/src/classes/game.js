@@ -71,6 +71,7 @@ class Game {
     if (this.currentPlayer.isAlive()) {
       this.handleProtected();
       this.currentPlayer.castSpell(spell, target);
+
       this.handleStun();
       this.endTurn();
     }
@@ -98,6 +99,10 @@ class Game {
 
   getLoser() {
     return this.characters.filter((character) => !character.isAlive())[0];
+  }
+
+  sendMessage(message) {
+    return message;
   }
 }
 

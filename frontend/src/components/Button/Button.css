@@ -14,12 +14,6 @@
   border-radius: 5px;
   cursor: pointer;
   margin: 10px;
-  color: black;
-}
-
-.button-disabled {
-  background-color: #c0c0c0 !important;
-  cursor: not-allowed;
 }
 
 .description-container {
@@ -35,7 +29,7 @@
 .damage-button {
   height: 60px;
   width: 200px;
-  font-size: 20px;
+  font-size: 18px;
   background-color: #be1616;
   transition: 0.3s;
 }
@@ -47,7 +41,7 @@
 .utility-button {
   height: 60px;
   width: 200px;
-  font-size: 20px;
+  font-size: 18px;
   transition: 0.3s;
   background-color: #119e1c;
 }
@@ -59,7 +53,7 @@
 .status-button {
   height: 60px;
   width: 200px;
-  font-size: 20px;
+  font-size: 18px;
   transition: 0.3s;
   background-color: #1955c5;
 }
@@ -71,4 +65,43 @@
 .spell-cost-value {
   font-weight: bold;
   color: #1955c5;
+}
+
+.cancel-button {
+  font-size: 14px;
+  transition: 0.3s;
+  background-color: #a80e0e;
+}
+
+.cancel-button:hover {
+  background-color: #a80e0ead;
+}
+
+.start-game-button {
+  background-color: #2f9133;
+}
+
+.start-game-button:hover {
+  background-color: #4caf50ad;
+}
+
+.ready-button {
+  background-color: #2f9133;
+}
+
+.ready-button:hover {
+  background-color: #4caf50ad;
+}
+
+.not-ready-button {
+  background-color: #a80e0e;
+}
+
+.not-ready-button:hover {
+  background-color: #a80e0ead;
+}
+
+.button-disabled {
+  background-color: #c0c0c0 !important;
+  cursor: not-allowed;
 }

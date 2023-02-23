@@ -1,6 +1,5 @@
 nav {
-  background-color: transparent !important;
-  overflow: hidden;
+  background-color: transparent;
   font-size: 18px;
   width: 100%;
 }
@@ -27,7 +26,6 @@ nav li:first-child img {
   width: 30px;
   margin-bottom: 5px;
 }
-
 nav li:last-child {
   float: right;
 }
