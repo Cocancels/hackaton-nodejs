@@ -1,23 +1,15 @@
-import React from "react";
+import "./HealthBar.css";
+import "./HealthBar.css";
 
 const HealthBar = (props: { health: number; maxHealth: number }) => {
   const { health, maxHealth } = props;
-  const style = {
-    width: `${health}%`,
-    backgroundColor: health > 70 ? "green" : health > 30 ? "yellow" : "red",
-    height: "20px",
-    transition: "width 0.2s ease-in-out",
-    borderRadius: "20px",
-    paddingLeft: "10px",
-    display: "flex",
-    alignItems: "center",
-  };
+
+  const fillWidth = `${(health / maxHealth) * 100}%`;
 
   return (
-    <div style={style}>
-      <p>
-        {health} / {maxHealth}
-      </p>
+    <div className="health-bar">
+      <div className="health-bar__fill" style={{ width: fillWidth }} />
+      <div className="health-bar__label">{`${health}/${maxHealth}`}</div>
     </div>
   );
 };

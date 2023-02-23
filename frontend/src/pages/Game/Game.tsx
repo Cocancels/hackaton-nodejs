@@ -2,22 +2,28 @@ import { useEffect, useState } from "react";
 import Game from "../../classes/game";
 import CharacterComponent from "../../components/Character/Character";
 import Character from "../../classes/character";
-import { CharacterData } from "../../interfaces/Character";
 import "./game.css";
 import Button from "../../components/Button/Button";
-import { useParams } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import { Room } from "../../interfaces/Room";
 import Incendio from "../../classes/Spells/Incendio";
 import { io } from "socket.io-client";
-import { RoomInfos } from "./Rooms/RoomInfos/RoomInfos";
 import { RoomList } from "./Rooms/RoomsList/RoomList";
 import PetrificusTotalus from "../../classes/Spells/PetrificusTotalus";
-import { Spell } from "../../interfaces/Spell";
+import { UserInterface } from "./UserInterface/UserInterface";
+import Protego from "../../classes/Spells/Protego";
+import Reparo from "../../classes/Spells/Reparo";
+import Attackus from "../../classes/Spells/Attackus";
+import Avadakedavra from "../../classes/Spells/Avadakedavra";
 
 const socket = io("http://localhost:3001", {
   transports: ["websocket", "polling", "flashsocket"],
 });
+
+interface Results {
+  winner: Character;
+  loser: Character;
+}
 
 export const GamePage = () => {
   const [actualRoom, setActualRoom] = useState<Room>();
@@ -31,6 +37,10 @@ export const GamePage = () => {
   const [chooseTarget, setChooseTarget] = useState<boolean>(false);
   const [selectedSpell, setSelectedSpell] = useState<number>(0);
   const [characters, setCharacters] = useState<Character[]>([]);
+  const [spellUsed, setSpellUsed] = useState<boolean>(false);
+  const [results, setResults] = useState<Results>();
+
+  const [gameId, setGameId] = useState();
 
   useEffect(() => {
     fetchData();
@@ -59,18 +69,41 @@ export const GamePage = () => {
     socket.on("roomLeft", (room: Room) => {
       setActualRoom(room);
     });
+
+    socket.on("disconnectedAll", (rooms: Room[]) => {
+      setRooms(rooms);
+      handleLeaveRoom();
+    });
+
+    socket.on("gameEnded", (results: Results) => {
+      setResults(results);
+    });
   }, []);
+
   const fetchData = () => {
     const actualUser = localStorage.getItem("actualUser");
 
     if (actualUser) {
       const newActualUser = JSON.parse(actualUser);
 
-      setActualUser(newActualUser);
+      setActualUser({ ...newActualUser, isReadyToPlay: false });
 
-      fetch("http://localhost:3001/rooms").then((res) => res.json());
+      fetch("http://localhost:3001/rooms")
+        .then((res) => res.json())
+        .then((data) => {
+          checkIfUserIsInRooms(newActualUser, data.rooms);
+          setRooms(data.rooms);
+        });
+
+      socket.on("readySet", (room: Room, user: User) => {
+        setActualRoom(room);
+        if (user.id === newActualUser?.id) {
+          setActualUser(user);
+        }
+      });
     }
   };
+
   const createClassCharacter = (user: User) => {
     const newCharacter = new Character(
       user.id,
@@ -79,22 +112,29 @@ export const GamePage = () => {
       user.character.maxHealth,
       user.character.maxMana,
       user.character.attack,
-      [new Incendio(), new PetrificusTotalus()]
+      [
+        new Attackus(),
+        new Incendio(),
+        new PetrificusTotalus(),
+        new Protego(),
+        new Reparo(),
+        new Avadakedavra(),
+      ],
+      user.nickname
     );
     return newCharacter;
   };
 
-  const getUsersIds = async () => {
+  const getUsers = async () => {
     let users = actualRoom?.users;
     let usersIds: any[] = [];
-
     await fetch("https://hp-api-iim.azurewebsites.net/users").then(
       async (response) => {
         const data = await response.json();
         users?.map(async (user) => {
           data?.map((dbUser: any) => {
             if (user.nickname === dbUser.name) {
-              usersIds.push(dbUser.id);
+              usersIds.push(dbUser);
             }
           });
         });
@@ -104,12 +144,19 @@ export const GamePage = () => {
   };
 
   const handleStartGame = async () => {
-    let usersIds = await getUsersIds();
+    let users = await getUsers();
+    console.log(users);
+
+    let usersIds: any[] = [];
+
+    users.map((user) => {
+      usersIds.push(user.id);
+    });
 
     const body = {
       game: "Wizard duel",
       userIds: usersIds,
-      type: "1vs1",
+      type: "1v1",
     };
     const requestOptions = {
       method: "POST",
@@ -119,18 +166,20 @@ export const GamePage = () => {
       },
       body: JSON.stringify(body),
     };
-    fetch("https://hp-api-iim.azurewebsites.net/matches/start", requestOptions)
-      .then(async (response) => {
-        const data = await response.json();
-      })
-      .then(() => {
-        const game = new Game(characters, 0, null, null, false);
-        game.startGame();
-        setGame(game);
-        setCurrentPlayer(game.currentPlayer);
+    fetch(
+      "https://hp-api-iim.azurewebsites.net/matches/start",
+      requestOptions
+    ).then(async (response) => {
+      const data = await response.json();
+      setGameId(data.id);
+    });
 
-        socket.emit("startGame", actualRoom, game);
-      });
+    const game = new Game(characters, 0, null, null, false);
+    game.startGame();
+    setGame(game);
+    setCurrentPlayer(game.currentPlayer);
+
+    socket.emit("startGame", actualRoom, game);
   };
 
   const handleChoseSpell = (id: number) => {
@@ -144,6 +193,7 @@ export const GamePage = () => {
     setCurrentPlayer(game?.currentPlayer);
     setGame(game);
     setTurn(turn + 1);
+    handleSpellAnimation();
 
     socket.emit("updateGame", actualRoom, game);
   };
@@ -154,14 +204,44 @@ export const GamePage = () => {
     handleSpellUse(selectedSpell, target);
   };
 
-  const handleEndGame = () => {
+  const handleEndGame = async () => {
     if (isGameStarted) {
-      if (game?.currentPlayer.health <= 0) {
-        console.log(game?.endGame());
-        setIsGameStarted(false);
-      } else {
-        setCurrentPlayer(game?.currentPlayer);
-      }
+      characters.forEach(async (character: Character) => {
+        if (!character.isAlive()) {
+          let users = await getUsers();
+          let gameWinner = game?.getWinner();
+          let winnerId = null;
+
+          users.map((user) => {
+            if (gameWinner.nickName === user.name) {
+              winnerId = user.id;
+            }
+          });
+
+          const body = {
+            gameId: gameId,
+            userId: winnerId,
+          };
+          const requestOptions = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("userToken"),
+            },
+            body: JSON.stringify(body),
+          };
+
+          const results = game?.endGame();
+          socket.emit("endGame", actualRoom, results);
+
+          fetch(
+            "https://hp-api-iim.azurewebsites.net/matches/end",
+            requestOptions
+          );
+        } else {
+          setCurrentPlayer(game?.currentPlayer);
+        }
+      });
     }
   };
 
@@ -183,25 +263,40 @@ export const GamePage = () => {
     });
   };
 
-  const handleCurrentPlayer = (id: number) => {
-    if (actualUser?.id === id && currentPlayer?.id === id) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   const handleLeaveRoom = () => {
     socket.emit("leaveRoom", actualRoom, actualUser);
     setActualRoom(undefined);
+    resetGame();
+    actualUser && setActualUser({ ...actualUser, isReadyToPlay: false });
+  };
+
+  const resetGame = () => {
+    setGame(undefined);
     setCurrentPlayer(undefined);
     setCanGameStart(false);
     setIsGameStarted(false);
+    setCharacters([]);
+    setTurn(0);
+    setSpellUsed(false);
+  };
+
+  const reorganizeCharacters = (characters: Character[]) => {
+    const currentCharacter = characters.find(
+      (character) => character.id === actualUser?.id
+    );
+
+    const filteredCharacters = characters.filter(
+      (character) => character.id !== actualUser?.id
+    );
+
+    filteredCharacters.unshift(currentCharacter!);
+
+    setCharacters(filteredCharacters);
   };
 
   useEffect(() => {
     handleEndGame();
-  }, [turn]);
+  }, [game]);
 
   useEffect(() => {
     if (actualRoom) {
@@ -210,7 +305,7 @@ export const GamePage = () => {
           createClassCharacter(user)
         );
 
-        setCharacters(newCharacters);
+        reorganizeCharacters(newCharacters);
       } else {
         const currentPlayer = characters.find(
           (character) => character.id === actualRoom.game?.currentPlayer.id
@@ -254,89 +349,93 @@ export const GamePage = () => {
     game?.isStarted === true && setCharacters(game?.characters);
   }, [game]);
 
+  const handleSpellAnimation = () => {
+    setSpellUsed(true);
+    setTimeout(() => {
+      setSpellUsed(false);
+    }, 1000);
+  };
+
+  const handleSetReady = () => {
+    socket.emit("setReady", actualRoom, actualUser);
+  };
+
+  const isOdd = (num: number) => num % 2;
+
   return (
-    <div className="Game">
-      <div className="game-container">
-        <div className="game-characters-container">
-          {actualRoom &&
-            characters.map((character: Character) => (
-              <CharacterComponent key={character.id} character={character} />
-            ))}
-          <div className="button-play-leave">
-            <div className="room-name">
-              <h2>{actualRoom ? actualRoom.name : "Room"}</h2>
-            </div>
-            {canGameStart && !isGameStarted && (
-              <Button
-                className="start-game"
-                onClick={handleStartGame}
-                label="Start Game"
-              />
-            )}
-            {actualRoom && (
-              <Button
-                className="leave-room"
-                onClick={handleLeaveRoom}
-                label="Leave Room"
-              />
-            )}
-          </div>
-        </div>
-        {currentPlayer && (
-          <div className="game-players-container">
-            <p>Current player : {currentPlayer.firstName}</p>
-          </div>
-        )}
-        <div className="game-spells-container">
-          {isGameStarted &&
-            currentPlayer &&
-            characters.map((character: Character) => {
-              if (
-                character.id === currentPlayer.id &&
-                character.id === actualUser?.id
-              )
-                return (
-                  <div key={character.id} className="game-spells">
-                    {character.spells.map((spell: Spell) => {
-                      return (
-                        <Button
-                          key={spell.id}
-                          onClick={() => {
-                            handleChoseSpell(spell.id);
-                          }}
-                          className={`${spell.type}-button`}
-                          label={spell.name}
-                          spell={spell}
-                        />
-                      );
-                    })}
-                  </div>
-                );
-            })}
-        </div>
-        {chooseTarget && (
-          <div className="target-container">
-            {actualRoom &&
-              characters.map((character: Character) => {
-                return (
-                  <Button
-                    key={character.id}
-                    label={character.firstName}
-                    onClick={() => handleTargetSelection(character)}
-                  />
-                );
-              })}
-          </div>
-        )}
-      </div>
-      {!actualRoom ? (
+    <div className="game-container">
+      {actualRoom ? (
+        <Button
+          className="leave-room"
+          onClick={handleLeaveRoom}
+          label="Leave Room"
+        />
+      ) : (
         <RoomList
           rooms={rooms}
           onCreateRoomClick={createRoom}
           onRoomClick={joinRoom}
         />
-      ) : (
-        <RoomInfos room={actualRoom} />
+      )}
+
+      <p onClick={() => socket.emit("disconnectAll")}>Test</p>
+
+      {results?.winner && (
+        <div className="results-modal">
+          <div className="results-modal-content">
+            <h1>Results: </h1>
+            <p>
+              Gagnant: <span>{results?.winner.firstName}</span>
+            </p>
+            <p>
+              Perdant: <span>{results?.loser.firstName}</span>
+            </p>
+            <p>
+              Nombre de tours: <span>{turn}</span>
+            </p>
+            <Button
+              className="cancel-button"
+              label="Close"
+              onClick={() => {
+                setResults(undefined);
+                handleLeaveRoom();
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="game-characters-container">
+        {actualRoom &&
+          characters.map((character: Character, index: number) => (
+            <CharacterComponent
+              key={character.id}
+              character={character}
+              flip={isOdd(index) ? true : false}
+              isAttacking={spellUsed}
+              actualUser={actualUser}
+            />
+          ))}
+      </div>
+
+      {actualRoom && (
+        <UserInterface
+          characters={characters}
+          rooms={rooms}
+          currentPlayer={currentPlayer}
+          actualUser={actualUser}
+          actualRoom={actualRoom}
+          isGameStarted={isGameStarted}
+          chooseTarget={chooseTarget}
+          handleChoseSpell={handleChoseSpell}
+          handleTargetSelection={handleTargetSelection}
+          onCreateRoomClick={createRoom}
+          onRoomClick={joinRoom}
+          handleSetReady={handleSetReady}
+          handleStartGame={handleStartGame}
+          socket={socket}
+          setActualRoom={setActualRoom}
+        />
       )}
     </div>
   );

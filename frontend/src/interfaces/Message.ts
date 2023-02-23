@@ -2,9 +2,8 @@ import { User } from "./User";
 import { Room } from "./Room";
 
 export interface Message {
-  id: string;
   content: string;
-  user: User;
-  room: Room;
+  user: User | undefined;
+  room: Room | undefined;
   createdAt: Date;
 }

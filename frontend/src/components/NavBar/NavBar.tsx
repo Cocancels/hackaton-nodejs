@@ -32,9 +32,6 @@ const NavBar = () => {
               <Link to="/game">Game</Link>
             </li>
             <li>
-              <Link to="/account">{actualUser.nickname}</Link>
-            </li>
-            <li>
               <Link to="/" onClick={handleLogout}>
                 Déconnexion
               </Link>
@@ -42,9 +39,6 @@ const NavBar = () => {
           </>
         ) : (
           <>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
             <li>
               <Link to="/character">Create account</Link>
             </li>

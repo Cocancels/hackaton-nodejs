@@ -10,4 +10,5 @@ export interface User {
   loses: number;
   house: string;
   character: CharacterData;
+  isReadyToPlay: boolean;
 }

@@ -1,6 +1,7 @@
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 import { GamePage } from "./pages/Game/Game";
 import LoginForm from "./components/User/LoginForm";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CreateUserForm from "./components/User/CreateUserForm";
 import NavBar from "./components/NavBar/NavBar";
 
