@@ -40,6 +40,8 @@ export const GamePage = () => {
   const [spellUsed, setSpellUsed] = useState<boolean>(false);
   const [results, setResults] = useState<Results>();
 
+  const [gameId, setGameId] = useState();
+
   useEffect(() => {
     fetchData();
 
@@ -117,12 +119,56 @@ export const GamePage = () => {
         new Protego(),
         new Reparo(),
         new Avadakedavra(),
-      ]
+      ],
+        user.nickname
     );
     return newCharacter;
   };
 
-  const handleStartGame = () => {
+
+  const getUsers = async () => {
+    let users = actualRoom?.users
+    let usersIds: any[] = []
+    await fetch("https://hp-api-iim.azurewebsites.net/users")
+        .then(async (response) => {
+          const data = await response.json();
+          users?.map( async (user) => {
+            data?.map((dbUser: any) => {
+              if (user.nickname === dbUser.name) {
+                usersIds.push(dbUser)
+              }
+          })
+        })
+    })
+    return usersIds;
+  }
+
+  const handleStartGame = async () => {
+    let users = await getUsers()
+    console.log(users)
+
+    let usersIds: any[] = []
+
+    users.map((user) => {
+      usersIds.push(user.id)
+    })
+
+    const body = {
+      game: "Wizard duel",
+      userIds: usersIds,
+      type: "1v1"
+    }
+    const requestOptions = {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("userToken")},
+      body: JSON.stringify(body),
+    };
+    fetch("https://hp-api-iim.azurewebsites.net/matches/start", requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+          setGameId(data.id)
+        })
+
     const game = new Game(characters, 0, null, null, false);
     game.startGame();
     setGame(game);
@@ -153,13 +199,38 @@ export const GamePage = () => {
     handleSpellUse(selectedSpell, target);
   };
 
-  const handleEndGame = () => {
+  const handleEndGame = async () => {
     if (isGameStarted) {
-      characters.forEach((character: Character) => {
+      characters.forEach(async (character: Character) => {
         if (!character.isAlive()) {
+          let users = await getUsers()
+          let gameWinner = game?.getWinner()
+          let winnerId = null
+
+          users.map((user) => {
+            if(gameWinner.nickName === user.name){
+              winnerId = user.id
+            }
+          })
+
+          const body = {
+            gameId: gameId,
+            userId: winnerId
+          }
+          const requestOptions = {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("userToken")},
+            body: JSON.stringify(body),
+          };
+
           const results = game?.endGame();
           socket.emit("endGame", actualRoom, results);
+
+          fetch("https://hp-api-iim.azurewebsites.net/matches/end", requestOptions)
+        } else {
+          setCurrentPlayer(game?.currentPlayer);
         }
+
       });
     }
   };
