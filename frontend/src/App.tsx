@@ -13,7 +13,6 @@ function App() {
 
         <Routes>
           <Route path="/" element={<LoginForm />} />
-          <Route path="/character" element={<CreateUserForm />} />
           <Route path="/game" element={<GamePage />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/character" element={<CreateUserForm />} />
