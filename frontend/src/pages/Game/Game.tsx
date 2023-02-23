@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState} from "react";
 import Game from "../../classes/game";
 import CharacterComponent from "../../components/Character/Character";
 import Character from "../../classes/character";
-import { CharacterData } from "../../interfaces/Character";
+import {CharacterData} from "../../interfaces/Character";
 import "./game.css";
 import Button from "../../components/Button/Button";
-import { useParams } from "react-router-dom";
-import { User } from "../../interfaces/User";
-import { Room } from "../../interfaces/Room";
+import {useParams} from "react-router-dom";
+import {User} from "../../interfaces/User";
+import {Room} from "../../interfaces/Room";
 import Incendio from "../../classes/Spells/Incendio";
-import { io } from "socket.io-client";
-import { RoomInfos } from "./Rooms/RoomInfos/RoomInfos";
-import { RoomList } from "./Rooms/RoomsList/RoomList";
+import {io} from "socket.io-client";
+import {RoomInfos} from "./Rooms/RoomInfos/RoomInfos";
+import {RoomList} from "./Rooms/RoomsList/RoomList";
 import PetrificusTotalus from "../../classes/Spells/PetrificusTotalus";
-import { Spell } from "../../interfaces/Spell";
+import {Spell} from "../../interfaces/Spell";
 
 const socket = io("http://localhost:3001", {
   transports: ["websocket", "polling", "flashsocket"],
@@ -31,6 +31,8 @@ export const GamePage = () => {
   const [chooseTarget, setChooseTarget] = useState<boolean>(false);
   const [selectedSpell, setSelectedSpell] = useState<number>(0);
   const [characters, setCharacters] = useState<Character[]>([]);
+
+  const [gameId, setGameId] = useState();
 
   useEffect(() => {
     fetchData();
@@ -66,43 +68,41 @@ export const GamePage = () => {
     if (actualUser) {
       const newActualUser = JSON.parse(actualUser);
 
-      console.log(newActualUser);
-
       setActualUser(newActualUser);
 
       fetch("http://localhost:3001/rooms")
-        .then((res) => res.json())
-        .then((data) => {
-          checkIfUserIsInRooms(newActualUser, data.rooms);
-          setRooms(data.rooms);
-        });
+          .then((res) => res.json())
+          .then((data) => {
+            checkIfUserIsInRooms(newActualUser, data.rooms);
+            setRooms(data.rooms);
+          });
     }
   };
   const createClassCharacter = (user: User) => {
     const newCharacter = new Character(
-      user.id,
-      user.firstname,
-      user.lastname,
-      user.character.maxHealth,
-      user.character.maxMana,
-      user.character.attack,
-      [new Incendio(), new PetrificusTotalus()]
+        user.id,
+        user.firstname,
+        user.lastname,
+        user.character.maxHealth,
+        user.character.maxMana,
+        user.character.attack,
+        [new Incendio(), new PetrificusTotalus()],
+        user.nickname
     );
     return newCharacter;
   };
 
 
-  const getUsersIds = async () => {
+  const getUsers = async () => {
     let users = actualRoom?.users
     let usersIds: any[] = []
-
     await fetch("https://hp-api-iim.azurewebsites.net/users")
         .then(async (response) => {
           const data = await response.json();
           users?.map( async (user) => {
             data?.map((dbUser: any) => {
               if (user.nickname === dbUser.name) {
-                usersIds.push(dbUser.id)
+                usersIds.push(dbUser)
               }
           })
         })
@@ -111,12 +111,19 @@ export const GamePage = () => {
   }
 
   const handleStartGame = async () => {
-    let usersIds = await getUsersIds()
+    let users = await getUsers()
+    console.log(users)
+
+    let usersIds: any[] = []
+
+    users.map((user) => {
+      usersIds.push(user.id)
+    })
 
     const body = {
       game: "Wizard duel",
       userIds: usersIds,
-      type: "1vs1"
+      type: "1v1"
     }
     const requestOptions = {
       method: "POST",
@@ -126,14 +133,15 @@ export const GamePage = () => {
     fetch("https://hp-api-iim.azurewebsites.net/matches/start", requestOptions)
         .then(async (response) => {
           const data = await response.json();
-        }).then(() =>  {
-            const game = new Game(characters, 0, null, null, false);
-            game.startGame();
-            setGame(game);
-            setCurrentPlayer(game.currentPlayer);
+          setGameId(data.id)
+        })
 
-            socket.emit("startGame", actualRoom, game);
-    })
+    const game = new Game(characters, 0, null, null, false);
+    game.startGame();
+    setGame(game);
+    setCurrentPlayer(game.currentPlayer);
+
+    socket.emit("startGame", actualRoom, game);
   };
 
   const handleChoseSpell = (id: number) => {
@@ -157,11 +165,40 @@ export const GamePage = () => {
     handleSpellUse(selectedSpell, target);
   };
 
-  const handleEndGame = () => {
+  const handleEndGame = async () => {
     if (isGameStarted) {
       if (game?.currentPlayer.health <= 0) {
-        console.log(game?.endGame());
         setIsGameStarted(false);
+
+        let users = await getUsers()
+        let gameWinner = game?.getWinner()
+        let winnerId = null
+
+        console.log(users)
+        console.log(gameWinner)
+
+        users.map((user) => {
+          if(gameWinner.nickName === user.name){
+            winnerId = user.id
+          }
+        })
+
+        const body = {
+          gameId: gameId,
+          userId: winnerId
+        }
+        const requestOptions = {
+          method: "POST",
+          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("userToken")},
+          body: JSON.stringify(body),
+        };
+        fetch("https://hp-api-iim.azurewebsites.net/matches/end", requestOptions)
+            .then(async (response) => {
+              const data = await response.json();
+
+              console.log(data)
+            })
+
       } else {
         setCurrentPlayer(game?.currentPlayer);
       }

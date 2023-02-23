@@ -8,7 +8,8 @@ class Character {
     maxHealth = 100,
     maxMana = 0,
     attack = 10,
-    spells
+    spells,
+    nickName
   ) {
     this.id = id;
     this.firstName = firstName;
@@ -22,6 +23,7 @@ class Character {
     this.status = [];
     this.isProtected = 0;
     this.isStunned = 0;
+    this.nickName = nickName;
   }
 
   isAlive() {

@@ -13,4 +13,5 @@ export interface CharacterData {
   status: string[];
   isProtected: number;
   isStunned: number;
+  nickName : string;
 }
