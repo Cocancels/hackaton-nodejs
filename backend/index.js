@@ -212,6 +212,8 @@ io.on("connection", (socket) => {
     io.to(actualRoom.id).emit("roomLeft", updatedRoom);
   });
 
+  socket.on("disconnectAll", () => {});
+
   socket.on("endGame", (actualRoom, results) => {
     const { winner, loser } = results;
 

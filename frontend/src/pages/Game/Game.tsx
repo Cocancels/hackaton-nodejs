@@ -22,7 +22,7 @@ const socket = io("http://localhost:3001", {
 
 interface Results {
   winner: Character;
-  looser: Character;
+  loser: Character;
 }
 
 export const GamePage = () => {
@@ -297,9 +297,30 @@ export const GamePage = () => {
         />
       )}
 
+      <p onClick={() => socket.emit("disconnectAll")}>Test</p>
+
       {results?.winner && (
-        <div>
-          <h1>Results : {results.winner.firstName} won !</h1>
+        <div className="results-modal">
+          <div className="results-modal-content">
+            <h1>Results: </h1>
+            <p>
+              Gagnant: <span>{results?.winner.firstName}</span>
+            </p>
+            <p>
+              Perdant: <span>{results?.loser.firstName}</span>
+            </p>
+            <p>
+              Nombre de tours: <span>{turn}</span>
+            </p>
+            <Button
+              className="cancel-button"
+              label="Close"
+              onClick={() => {
+                setResults(undefined);
+                handleLeaveRoom();
+              }}
+            />
+          </div>
         </div>
       )}
 

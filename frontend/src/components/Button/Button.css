@@ -95,3 +95,13 @@
   font-weight: bold;
   color: #1955c5;
 }
+
+.cancel-button {
+  font-size: 14px;
+  transition: 0.3s;
+  background-color: #a80e0e;
+}
+
+.cancel-button:hover {
+  background-color: #a80e0ead;
+}
