@@ -66,16 +66,9 @@ export const GamePage = () => {
     if (actualUser) {
       const newActualUser = JSON.parse(actualUser);
 
-      console.log(newActualUser);
-
       setActualUser(newActualUser);
 
-      fetch("http://localhost:3001/rooms")
-        .then((res) => res.json())
-        .then((data) => {
-          checkIfUserIsInRooms(newActualUser, data.rooms);
-          setRooms(data.rooms);
-        });
+      fetch("http://localhost:3001/rooms").then((res) => res.json());
     }
   };
   const createClassCharacter = (user: User) => {
@@ -91,49 +84,53 @@ export const GamePage = () => {
     return newCharacter;
   };
 
-
   const getUsersIds = async () => {
-    let users = actualRoom?.users
-    let usersIds: any[] = []
+    let users = actualRoom?.users;
+    let usersIds: any[] = [];
 
-    await fetch("https://hp-api-iim.azurewebsites.net/users")
-        .then(async (response) => {
-          const data = await response.json();
-          users?.map( async (user) => {
-            data?.map((dbUser: any) => {
-              if (user.nickname === dbUser.name) {
-                usersIds.push(dbUser.id)
-              }
-          })
-        })
-    })
+    await fetch("https://hp-api-iim.azurewebsites.net/users").then(
+      async (response) => {
+        const data = await response.json();
+        users?.map(async (user) => {
+          data?.map((dbUser: any) => {
+            if (user.nickname === dbUser.name) {
+              usersIds.push(dbUser.id);
+            }
+          });
+        });
+      }
+    );
     return usersIds;
-  }
+  };
 
   const handleStartGame = async () => {
-    let usersIds = await getUsersIds()
+    let usersIds = await getUsersIds();
 
     const body = {
       game: "Wizard duel",
       userIds: usersIds,
-      type: "1vs1"
-    }
+      type: "1vs1",
+    };
     const requestOptions = {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("userToken")},
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("userToken"),
+      },
       body: JSON.stringify(body),
     };
     fetch("https://hp-api-iim.azurewebsites.net/matches/start", requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-        }).then(() =>  {
-            const game = new Game(characters, 0, null, null, false);
-            game.startGame();
-            setGame(game);
-            setCurrentPlayer(game.currentPlayer);
+      .then(async (response) => {
+        const data = await response.json();
+      })
+      .then(() => {
+        const game = new Game(characters, 0, null, null, false);
+        game.startGame();
+        setGame(game);
+        setCurrentPlayer(game.currentPlayer);
 
-            socket.emit("startGame", actualRoom, game);
-    })
+        socket.emit("startGame", actualRoom, game);
+      });
   };
 
   const handleChoseSpell = (id: number) => {

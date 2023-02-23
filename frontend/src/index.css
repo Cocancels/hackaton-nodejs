@@ -6,3 +6,25 @@ li {
   padding: 0;
   margin: 0;
 }
+
+.container-inscription {
+  background-color: rgb(102, 185, 175);
+  padding: 40px 10%;
+  transition-duration: 1s;
+}
+
+.container-color-serp {
+  background-color: #1a472a !important;
+}
+
+.container-color-grif {
+  background-color: #740001 !important;
+}
+
+.container-color-serd {
+  background-color: #0e1a40 !important;
+}
+
+.container-color-pouf {
+  background-color: #ecb939 !important;
+}
