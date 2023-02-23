@@ -182,15 +182,19 @@ io.on("connection", (socket) => {
 
   socket.on("sendMessage", (actualRoom, message) => {
     const newMessage = { ...message, createdAt: new Date() };
-    actualRoom.messages.push(newMessage);
+
+    const updatedRoom =
+      rooms.find((room) => room.id === actualRoom.id) || actualRoom;
+
+    updatedRoom.messages.push(newMessage);
 
     rooms.map((room) => {
       if (room.id === actualRoom.id) {
-        room.messages = actualRoom.messages;
+        room.messages = updatedRoom.messages;
       }
     });
 
-    io.to(actualRoom.id).emit("messageSent", actualRoom.messages);
+    io.to(actualRoom.id).emit("messageSent", updatedRoom.messages);
   });
 
   socket.on("leaveRoom", (actualRoom, actualUser) => {
@@ -210,8 +214,6 @@ io.on("connection", (socket) => {
 
   socket.on("endGame", (actualRoom, results) => {
     const { winner, loser } = results;
-
-    console.log(winner, loser);
 
     const sql = `UPDATE users SET wins = wins + 1 WHERE id = '${winner.id}';
                   UPDATE users SET loses = loses + 1 WHERE id = '${loser.id}';`;

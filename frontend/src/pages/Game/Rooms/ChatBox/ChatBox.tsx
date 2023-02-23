@@ -17,6 +17,7 @@ export const ChatBox = (props: ChatBoxProps) => {
 
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<any[]>([]);
+  const [room, setRoom] = useState<Room | undefined>(actualRoom);
 
   const handleSendMessage = () => {
     const newMessage: Message = {
@@ -32,8 +33,7 @@ export const ChatBox = (props: ChatBoxProps) => {
   useEffect(() => {
     socket.on("messageSent", (messages: Message[]) => {
       setMessages(messages);
-      console.log({ ...actualRoom, messages: messages });
-      actualRoom && setActualRoom({ ...actualRoom, messages: messages });
+      room && setRoom({ ...room, messages });
     });
   }, []);
 
