@@ -1,6 +1,7 @@
 .container-inscription {
   background-color: rgb(102, 185, 175);
   padding: 40px 10%;
+  transition-duration: 1s;
 }
 
 .container-color-serp {
